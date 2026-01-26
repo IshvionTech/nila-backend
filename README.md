@@ -153,7 +153,7 @@ Start with `DEVELOPER_GUIDE.md` for complete implementation instructions.
 ## 🧪 Testing
 
 Health check endpoint:
-
+(your port might vary)
 ```bash
 curl http://localhost:3000/health
 ```
@@ -161,3 +161,4 @@ curl http://localhost:3000/health
 ## 📞 Support
 
 Refer to inline documentation in each module for detailed implementation guidance.
+
