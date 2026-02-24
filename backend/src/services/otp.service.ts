@@ -16,7 +16,7 @@ export const sendOTP = async (phone: string, otp: string): Promise<void> => {
       return;
     }
 
-    // install twilio package for production:
+    // install twilio package
     const client = require('twilio')(accountSid, authToken);
     await client.messages.create({
       body: `Your Nila Healthcare OTP is: ${otp}. Valid for 10 minutes.`,
