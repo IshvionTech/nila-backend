@@ -1,0 +1,31 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import authRoutes from "./routes/auth.routes";
+import expertRoutes from "./routes/expert.routes";
+import userRoutes from "./routes/users.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
+import appointmentsRoutes from "./routes/appointments.routes";
+
+
+dotenv.config();
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use("/api/users", userRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/appointments", appointmentsRoutes);
+
+// Add this test route
+app.get("/test", (req, res) => {
+  res.json({ message: "Server is working!" });
+});
+
+app.use("/auth", authRoutes);
+app.use("/experts", expertRoutes);
+
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
+});
