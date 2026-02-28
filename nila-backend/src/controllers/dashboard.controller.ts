@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { pool } from "../db";
+import  pool  from "../db";
 
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {
@@ -34,10 +34,10 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
       SELECT 
         id,
         patient_name AS "patientName",
-        session_type AS "sessionType",
+        type AS "sessionType",
         TO_CHAR(appointment_time, 'HH12:MI AM') AS "time",
         appointment_date AS "date"
-      FROM upcoming_appointments
+      FROM clinic_appointments
       WHERE appointment_date >= CURRENT_DATE
       ORDER BY appointment_date, appointment_time
       LIMIT 5
@@ -45,10 +45,11 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
 
     res.json(result.rows);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching upcoming:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const getExpertAvailability = async (req: Request, res: Response) => {
   try {

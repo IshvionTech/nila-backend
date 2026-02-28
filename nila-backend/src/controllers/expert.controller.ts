@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { pool } from "../db";
+import  pool  from "../db";
 
 export const getExperts = async (req: Request, res: Response) => {
      //console.log("getExperts function called"); // Add this line
