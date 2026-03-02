@@ -26,6 +26,10 @@ app.get("/test", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/experts", expertRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
