@@ -1,0 +1,4 @@
+[build]
+  base = "frontend-admin-ui"
+  command = "npm install && npm run build"
+  publish = "dist"
