@@ -16,7 +16,8 @@ export default function Dashboard() {
   const [statsData, setStatsData] = useState<any>(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/dashboard/stats")
+    fetch("https://nila-backend-yzem.onrender.com/api/dashboard/stats")
+   // fetch("http://localhost:5000/api/dashboard/stats")
       .then(res => res.json())
       .then(data => setStatsData(data))
       .catch(err => console.error(err));
@@ -62,11 +63,13 @@ export default function Dashboard() {
   const [availability, setAvailability] = useState<any[]>([]);
 
 useEffect(() => {
-  fetch("http://localhost:5000/api/dashboard/upcoming")
+  fetch("https://nila-backend-yzem.onrender.com/api/dashboard/upcoming")
+  //fetch("http://localhost:5000/api/dashboard/upcoming")
     .then(res => res.json())
     .then(data => setUpcoming(data));
 
-  fetch("http://localhost:5000/api/dashboard/availability")
+    fetch("https://nila-backend-yzem.onrender.com/api.dashboard/availability")
+  //fetch("http://localhost:5000/api/dashboard/availability")
     .then(res => res.json())
     .then(data => setAvailability(data));
 }, []);
@@ -74,7 +77,8 @@ useEffect(() => {
 
 const [overview, setOverview] = useState<any[]>([]);
 useEffect(() => {
-  fetch("http://localhost:5000/api/dashboard/overview")
+  fetch("https://nila-backend-yzem.onrender.com/api/dashboard/overview")
+  //fetch("http://localhost:5000/api/dashboard/overview")
     .then(res => res.json())
     .then(data => setOverview(data));
 }, []);
