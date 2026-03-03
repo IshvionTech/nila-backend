@@ -14,7 +14,8 @@ const app = express();
 
 //app.use(cors());
 app.use(cors({
-  origin: "https://frontend-admin-ui.netlify.app",
+  origin: "https://comfy-taiyaki-4c7ce7.netlify.app",
+  
   credentials: true
 }));
 
