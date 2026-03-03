@@ -14,7 +14,7 @@ const app = express();
 
 //app.use(cors());
 app.use(cors({
-  origin:"https://neon-lollipop-0c6945.netlify.app",
+   origin:"https://neon-lollipop-0c6945.netlify.app",
   //origin: "https://comfy-taiyaki-4c7ce7.netlify.app",
   credentials: true
 }));
