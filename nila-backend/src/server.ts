@@ -14,7 +14,7 @@ const app = express();
 
 //app.use(cors());
 app.use(cors({
-  origin: "https://your-frontend-name.netlify.app",
+  origin: "https://frontend-admin-ui.netlify.app",
   credentials: true
 }));
 
