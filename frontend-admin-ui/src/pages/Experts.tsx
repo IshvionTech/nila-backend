@@ -52,11 +52,14 @@ export default function Experts() {
   const [experts, setExperts] = useState<Expert[]>([]);
 const [loading, setLoading] = useState(true);
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 useEffect(() => {
   const fetchExperts = async () => {
     try {
-         console.log("Fetching experts..."); // Add this
-       const res=await fetch ("https://nila-backend-yzem.onrender.com/experts");
+         console.log("Fetching experts..."); // Add 
+        const res=await  fetch(`${API_URL}/experts`)
+      // const res=await fetch ("https://nila-backend-yzem.onrender.com/experts");
       //const res = await fetch("http://localhost:5000/experts");
             console.log("Response status:", res.status); // Add this
 

@@ -44,7 +44,10 @@ const handleRequestOTP = async () => {
   try {
     setLoading(true)
 
-   await fetch("https://nila-backend-yzem.onrender.com/auth/request-otp",{
+    const API_URL = import.meta.env.VITE_API_URL;
+    
+    await fetch(`${API_URL}/auth/request-otp`, {
+   //await fetch("https://nila-backend-yzem.onrender.com/auth/request-otp",{
     //await fetch("http://localhost:5000/auth/request-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

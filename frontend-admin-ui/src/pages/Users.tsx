@@ -14,8 +14,13 @@ export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
 
+
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   useEffect(() => {
-    fetch("https://nila-backend-yzem.onrender.com/api/users")
+
+      fetch(`${API_URL}/api/users`)
+    //fetch("https://nila-backend-yzem.onrender.com/api/users")
     //fetch("http://localhost:5000/api/users")
       .then((res) => res.json())
       .then((data) => setUsers(data))

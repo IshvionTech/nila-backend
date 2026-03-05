@@ -11,12 +11,16 @@ const activities = [
   { id: 5, action: 'New therapist joined', time: '6 hours ago', icon: UserCircle },
 ]
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Dashboard() {
   const { user } = useAuth()
   const [statsData, setStatsData] = useState<any>(null);
 
   useEffect(() => {
-    fetch("https://nila-backend-yzem.onrender.com/api/dashboard/stats")
+    fetch(`${API_URL}/api/dashboard/stats`)
+    //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/stats")
    // fetch("http://localhost:5000/api/dashboard/stats")
       .then(res => res.json())
       .then(data => setStatsData(data))
@@ -63,12 +67,14 @@ export default function Dashboard() {
   const [availability, setAvailability] = useState<any[]>([]);
 
 useEffect(() => {
-  fetch("https://nila-backend-yzem.onrender.com/api/dashboard/upcoming")
+  fetch(`${API_URL}/api/dashboard/upcoming`)
+  //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/upcoming")
   //fetch("http://localhost:5000/api/dashboard/upcoming")
     .then(res => res.json())
     .then(data => setUpcoming(data));
 
-    fetch("https://nila-backend-yzem.onrender.com/api.dashboard/availability")
+    fetch(`${API_URL}/api/dashboard/availability`)
+   // fetch("https://nila-backend-yzem.onrender.com/api.dashboard/availability")
   //fetch("http://localhost:5000/api/dashboard/availability")
     .then(res => res.json())
     .then(data => setAvailability(data));
@@ -77,7 +83,8 @@ useEffect(() => {
 
 const [overview, setOverview] = useState<any[]>([]);
 useEffect(() => {
-  fetch("https://nila-backend-yzem.onrender.com/api/dashboard/overview")
+    fetch(`${API_URL}/api/dashboard/overview`)
+  //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/overview")
   //fetch("http://localhost:5000/api/dashboard/overview")
     .then(res => res.json())
     .then(data => setOverview(data));

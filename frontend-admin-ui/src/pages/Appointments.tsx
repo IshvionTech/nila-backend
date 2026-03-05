@@ -32,6 +32,10 @@ interface Appointment {
   notes?: string
 }
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function Appointments() {
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
@@ -60,7 +64,8 @@ export default function Appointments() {
   const fetchAppointments = async () => {
     setLoading(true)
     try {
-      const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointment")
+      const res = await fetch(`${API_URL}/api/appointment`)
+      //const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointment")
      // const res = await fetch("http://localhost:5000/api/appointments")
       if (!res.ok) throw new Error('Failed to fetch')
       const data = await res.json()
@@ -102,7 +107,8 @@ export default function Appointments() {
   notes: formData.notes
 };
 
-      const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointments",{
+      const res = await fetch(`${API_URL}/api/appointments`,{
+      // const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointments",{
      // const res = await fetch("http://localhost:5000/api/appointments", {
         method: "POST",
         headers: {
