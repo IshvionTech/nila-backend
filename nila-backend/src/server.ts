@@ -13,7 +13,7 @@ const app = express();
 
 
 const corsOptions = {
-  origin: "https://elaborate-babka-ab6730.netlify.app",
+  origin: "https:/lucent-axolotl-e55b80.netlify.app",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
