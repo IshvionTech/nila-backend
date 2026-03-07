@@ -13,7 +13,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: "https://neon-lollipop-0c6945.netlify.app",
+  origin: "https://deft-lamington-5b55bf.netlify.app",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
