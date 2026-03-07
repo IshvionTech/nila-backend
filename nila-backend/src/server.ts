@@ -7,7 +7,6 @@ import userRoutes from "./routes/users.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import appointmentsRoutes from "./routes/appointments.routes";
 
-
 dotenv.config();
 
 const app = express();
@@ -24,11 +23,6 @@ app.options("*", cors());
 
 
 //app.use(cors());
-//app.use(cors({
-  // origin:"https://neon-lollipop-0c6945.netlify.app",
-  //origin: "https://comfy-taiyaki-4c7ce7.netlify.app",
-  //credentials: true
-//}));
 
 app.use(express.json());
 app.use("/api/users", userRoutes);
@@ -52,6 +46,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
 // app.listen(5000, () => {
 //   console.log("Server running on port 5000");
 // });
