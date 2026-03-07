@@ -64,8 +64,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadStoredAuth()
   }, [])
 
+
+
 const login = async (phone: string, otp: string, rememberMe: boolean) => {
-  const res = await fetch("http://localhost:5000/auth/verify-otp", {
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    const res = await fetch(`${API_URL}/auth/verify-otp`, {
+ // const res = await fetch("http://localhost:5000/auth/verify-otp", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone, otp }),
