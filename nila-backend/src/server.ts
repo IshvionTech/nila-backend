@@ -12,14 +12,25 @@ dotenv.config();
 const app = express();
 
 
-app.use(cors({
+const corsOptions = {
   origin: "https://deft-lamington-5b55bf.netlify.app",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
-}));
+};
 
-app.options("*", cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));   // fix preflight request
+
+
+// app.use(cors({
+//   origin: "https://deft-lamington-5b55bf.netlify.app",
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true
+// }));
+
+// app.options("*", cors());
 
 
 //app.use(cors());
