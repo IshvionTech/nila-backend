@@ -11,7 +11,8 @@ const generateOTP = () => {
 
 // Request OTP
 export const requestOTP = async (req: Request, res: Response) => {
-  const { phone } = req.body;
+  try{
+     const { phone } = req.body;
 
   if (!phone) {
     return res.status(400).json({ message: "Phone required" });
@@ -31,16 +32,21 @@ export const requestOTP = async (req: Request, res: Response) => {
   console.log("OTP:", otp); // For testing
 
   res.json({ message: "OTP sent" });
+}catch (error) {
+    console.error("OTP request error:", error);
+    res.status(500).json({ message: "Server error" });
+ }
 };
 
 // Verify OTP
 export const verifyOTP = async (req: Request, res: Response) => {
-  const { phone, otp } = req.body;
+  try { 
+     const { phone, otp } = req.body;
 
-  const result = await pool.query(
-    "SELECT * FROM admins WHERE phone=$1",
-    [phone]
-  );
+     const result = await pool.query(
+        "SELECT * FROM admins WHERE phone=$1",
+        [phone]
+      );
 
   if (result.rows.length === 0) {
     return res.status(400).json({ message: "User not found" });
@@ -53,9 +59,10 @@ export const verifyOTP = async (req: Request, res: Response) => {
   }
 
   const secret = process.env.JWT_SECRET;
-if (!secret) {
-  return res.status(500).json({ message: "JWT secret not configured" });
-}
+  if (!secret) {
+    return res.status(500).json({ message: "JWT secret not configured" });
+  }
+
   const token = jwt.sign(
     { id: user.id, phone: user.phone },
     process.env.JWT_SECRET as string,
@@ -63,4 +70,8 @@ if (!secret) {
   );
 
   res.json({ token });
+} catch (error) {
+    console.error("Verify OTP error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
