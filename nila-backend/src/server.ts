@@ -13,7 +13,8 @@ const app = express();
 
 
 const corsOptions = {
-  origin: "https://clinquant-kleicha-d692c7.netlify.app",
+  origin:"https://iridescent-centaur-2be2f7.netlify.app",
+  //origin: "https://clinquant-kleicha-d692c7.netlify.app",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
