@@ -139,8 +139,24 @@ CREATE TABLE IF NOT EXISTS expert_availability (
   is_available BOOLEAN DEFAULT true
 );
 `);
+  
 
-    console.log("Admins table ready");
+  await pool.query(`
+  CREATE TABLE IF NOT EXISTS clinic_appointments (
+    id SERIAL PRIMARY KEY,
+    patient_name VARCHAR(150),
+    patient_id VARCHAR(50),
+    therapist_name VARCHAR(150),
+    appointment_date DATE,
+    appointment_time TIME,
+    duration INT,
+    status VARCHAR(50),
+    type VARCHAR(50),
+    notes TEXT
+  );
+`);  
+
+    console.log("All table ready");
   } catch (err) {
     console.error("Error creating table:", err);
   }
