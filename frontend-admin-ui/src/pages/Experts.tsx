@@ -62,7 +62,9 @@ const [newExpert, setNewExpert] = useState({
   title: "",
   email: "",
   phone: "",
-  specialty: "",
+  specialty: "psychology",
+  status: "active",
+  nextAvailable: ""
 })
 
 const handleAddExpert = async () => {
@@ -83,12 +85,12 @@ const handleAddExpert = async () => {
       title: data.title,
       email: data.email,
       phone: data.phone,
-      status: "active",
+      status: newExpert.status as ExpertStatus,
       specialty: data.specialty.split(",") as ExpertSpecialty[],
       rating: 0,
       patients: 0,
       joinedDate: new Date().toISOString(),
-      nextAvailable: "",
+      nextAvailable: newExpert.nextAvailable,
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}`
     }
 
@@ -267,15 +269,43 @@ useEffect(() => {
           }
         />
 
-        <input
-          type="text"
-          placeholder="Specialty (comma separated)"
-          className="w-full border p-2 rounded"
-          value={newExpert.specialty}
-          onChange={(e) =>
-            setNewExpert({ ...newExpert, specialty: e.target.value })
-          }
-        />
+        <select
+  className="w-full border p-2 rounded"
+  value={newExpert.specialty}
+  onChange={(e) =>
+    setNewExpert({ ...newExpert, specialty: e.target.value })
+  }
+>
+  <option value="psychology">Psychology</option>
+  <option value="psychiatry">Psychiatry</option>
+  <option value="counseling">Counseling</option>
+  <option value="therapy">Therapy</option>
+  <option value="coaching">Coaching</option>
+</select>
+
+<select
+  className="w-full border p-2 rounded"
+  value={newExpert.status}
+  onChange={(e) =>
+    setNewExpert({ ...newExpert, status: e.target.value })
+  }
+>
+  <option value="active">Active</option>
+  <option value="on-leave">On Leave</option>
+  <option value="pending">Pending</option>
+  <option value="inactive">Inactive</option>
+</select>
+
+<input
+  type="datetime-local"
+  className="w-full border p-2 rounded"
+  value={newExpert.nextAvailable}
+  onChange={(e) =>
+    setNewExpert({ ...newExpert, nextAvailable: e.target.value })
+  }
+/>
+
+
 
       </div>
 
