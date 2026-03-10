@@ -64,6 +64,9 @@ const [newExpert, setNewExpert] = useState({
   phone: "",
   specialty: "psychology",
   status: "active",
+  rating: 0,
+  patients: 0,
+  joinedDate: "",
   nextAvailable: ""
 })
 
@@ -86,10 +89,10 @@ const handleAddExpert = async () => {
       email: data.email,
       phone: data.phone,
       status: newExpert.status as ExpertStatus,
-      specialty: data.specialty.split(",") as ExpertSpecialty[],
-      rating: 0,
-      patients: 0,
-      joinedDate: new Date().toISOString(),
+      specialty: [newExpert.specialty as ExpertSpecialty],
+      rating: newExpert.rating,
+      patients: newExpert.patients,
+      joinedDate:  newExpert.joinedDate,
       nextAvailable: newExpert.nextAvailable,
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}`
     }
@@ -305,6 +308,34 @@ useEffect(() => {
   }
 />
 
+<input
+  type="number"
+  placeholder="Rating"
+  className="w-full border p-2 rounded"
+  value={newExpert.rating}
+  onChange={(e) =>
+    setNewExpert({ ...newExpert, rating: Number(e.target.value) })
+  }
+/>
+
+<input
+  type="number"
+  placeholder="Total Patients"
+  className="w-full border p-2 rounded"
+  value={newExpert.patients}
+  onChange={(e) =>
+    setNewExpert({ ...newExpert, patients: Number(e.target.value) })
+  }
+/>
+
+<input
+  type="date"
+  className="w-full border p-2 rounded"
+  value={newExpert.joinedDate}
+  onChange={(e) =>
+    setNewExpert({ ...newExpert, joinedDate: e.target.value })
+  }
+/>
 
 
       </div>
