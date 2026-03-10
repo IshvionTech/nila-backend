@@ -25,12 +25,49 @@ export default function Users() {
       .then((res) => res.json())
       .then((data) => setUsers(data))
       .catch((err) => console.error(err));
-  }, []);
+  }, [API_URL]);
 
   const filteredUsers = users.filter(user => 
     user.name?.toLowerCase().includes(search.toLowerCase()) ||
     user.email?.toLowerCase().includes(search.toLowerCase())
   );
+
+
+  const [showDialog, setShowDialog] = useState(false);
+
+const [form, setForm] = useState({
+  name: "",
+  email: "",
+  role: "",
+  status: "Active"
+});
+
+
+const addUser = async (e:  React.FormEvent) => {
+  e.preventDefault();
+
+  const res = await fetch(`${API_URL}/api/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(form)
+  });
+
+  const newUser = await res.json();
+
+  setUsers([newUser, ...users]);
+
+  setShowDialog(false);
+
+  setForm({
+    name: "",
+    email: "",
+    role: "",
+    status: "Active"
+  });
+};
+
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -40,11 +77,91 @@ export default function Users() {
           <h1 className="text-3xl font-bold text-gray-900">Users</h1>
           <p className="text-gray-500 mt-1">Manage your team members</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
+        <button onClick={() => setShowDialog(true)}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-all shadow-lg hover:shadow-xl">
           <UserPlus className="h-5 w-5" />
           Add User
         </button>
       </div>
+
+
+
+
+
+
+    
+
+
+{showDialog && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+    <div className="bg-white p-6 rounded-xl w-96">
+
+      <h2 className="text-xl font-semibold mb-4">Add User</h2>
+
+      <form onSubmit={addUser} className="space-y-3">
+
+        <input
+          type="text"
+          placeholder="Name"
+          value={form.name}
+          onChange={(e)=>setForm({...form,name:e.target.value})}
+          className="w-full border p-2 rounded"
+          required
+        />
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={(e)=>setForm({...form,email:e.target.value})}
+          className="w-full border p-2 rounded"
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Role"
+          value={form.role}
+          onChange={(e)=>setForm({...form,role:e.target.value})}
+          className="w-full border p-2 rounded"
+        />
+
+        <select
+          value={form.status}
+          onChange={(e)=>setForm({...form,status:e.target.value})}
+          className="w-full border p-2 rounded"
+        >
+          <option>Active</option>
+          <option>Inactive</option>
+        </select>
+
+        <div className="flex justify-end gap-2 pt-2">
+
+          <button
+            type="button"
+            onClick={()=>setShowDialog(false)}
+            className="px-3 py-1 bg-gray-200 rounded"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="px-3 py-1 bg-blue-600 text-white rounded"
+          >
+            Save
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+)}
+
+
+
 
       {/* Search */}
       <div className="mb-6">
