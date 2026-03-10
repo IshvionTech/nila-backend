@@ -19,7 +19,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       totalUsers: totalUsers.rows[0].count,
       totalExperts: totalExperts.rows[0].count,
       todayAppointments: todayAppointments.rows[0].count,
-      revenue: totalRevenue.rows[0].coalesce
+     // revenue: totalRevenue.rows[0].coalesce
+      revenue: totalRevenue.rows[0].revenue
     });
 
   } catch (error) {
@@ -34,7 +35,7 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
       SELECT 
         id,
         patient_name AS "patientName",
-        type AS "sessionType",
+         session_type AS "sessionType",
         TO_CHAR(appointment_time, 'HH12:MI AM') AS "time",
         appointment_date AS "date"
       FROM upcoming_appointments
