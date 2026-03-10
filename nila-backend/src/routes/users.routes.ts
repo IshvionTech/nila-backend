@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getUsers } from "../controllers/users.controller";
+import pool from "../db";
 
 const router = Router();
 
