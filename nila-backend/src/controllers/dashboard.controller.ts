@@ -4,7 +4,7 @@ import  pool  from "../db";
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {
     const totalUsers = await pool.query("SELECT COUNT(*) FROM users");
-    const totalExperts = await pool.query("SELECT COUNT(*) FROM expert");
+    const totalExperts = await pool.query("SELECT COUNT(*) FROM experts");
 
     const todayAppointments = await pool.query(`
       SELECT COUNT(*) FROM appointments
@@ -12,7 +12,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     `);
 
     const totalRevenue = await pool.query(`
-      SELECT COALESCE(SUM(amount),0) FROM payments
+      SELECT COALESCE(SUM(amount),0) AS revenue FROM payments
     `);
 
     res.json({
@@ -37,7 +37,7 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
         type AS "sessionType",
         TO_CHAR(appointment_time, 'HH12:MI AM') AS "time",
         appointment_date AS "date"
-      FROM clinic_appointments
+      FROM upcoming_appointments
       WHERE appointment_date >= CURRENT_DATE
       ORDER BY appointment_date, appointment_time
       LIMIT 5
