@@ -52,6 +52,56 @@ export default function Experts() {
   const [experts, setExperts] = useState<Expert[]>([]);
 const [loading, setLoading] = useState(true);
 
+
+
+
+const [openDialog, setOpenDialog] = useState(false)
+
+const [newExpert, setNewExpert] = useState({
+  name: "",
+  title: "",
+  email: "",
+  phone: "",
+  specialty: "",
+})
+
+const handleAddExpert = async () => {
+  try {
+    const res = await fetch(`${API_URL}/experts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newExpert)
+    })
+
+    const data = await res.json()
+
+    const formatted: Expert = {
+      id: data.id.toString(),
+      name: data.name,
+      title: data.title,
+      email: data.email,
+      phone: data.phone,
+      status: "active",
+      specialty: data.specialty.split(",") as ExpertSpecialty[],
+      rating: 0,
+      patients: 0,
+      joinedDate: new Date().toISOString(),
+      nextAvailable: "",
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}`
+    }
+
+    setExperts(prev => [...prev, formatted])
+    setOpenDialog(false)
+
+  } catch (err) {
+    console.error("Add expert failed", err)
+  }
+}
+
+
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 useEffect(() => {
@@ -158,12 +208,100 @@ useEffect(() => {
             <Filter className="h-4 w-4 mr-2" />
             Export List
           </button>
-          <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 flex items-center shadow-lg hover:shadow-xl transition-all">
+          <button onClick={() => setOpenDialog(true)}
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 flex items-center shadow-lg hover:shadow-xl transition-all">
             <Plus className="h-5 w-5 mr-2" />
             Add New Expert
           </button>
         </div>
       </div>
+
+
+
+
+{openDialog && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-6 w-full max-w-md">
+      
+      <h2 className="text-xl font-bold mb-4">Add New Expert</h2>
+
+      <div className="space-y-3">
+
+        <input
+          type="text"
+          placeholder="Name"
+          className="w-full border p-2 rounded"
+          value={newExpert.name}
+          onChange={(e) =>
+            setNewExpert({ ...newExpert, name: e.target.value })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Title"
+          className="w-full border p-2 rounded"
+          value={newExpert.title}
+          onChange={(e) =>
+            setNewExpert({ ...newExpert, title: e.target.value })
+          }
+        />
+
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full border p-2 rounded"
+          value={newExpert.email}
+          onChange={(e) =>
+            setNewExpert({ ...newExpert, email: e.target.value })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Phone"
+          className="w-full border p-2 rounded"
+          value={newExpert.phone}
+          onChange={(e) =>
+            setNewExpert({ ...newExpert, phone: e.target.value })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Specialty (comma separated)"
+          className="w-full border p-2 rounded"
+          value={newExpert.specialty}
+          onChange={(e) =>
+            setNewExpert({ ...newExpert, specialty: e.target.value })
+          }
+        />
+
+      </div>
+
+      <div className="flex justify-end space-x-3 mt-6">
+        <button
+          onClick={() => setOpenDialog(false)}
+          className="px-4 py-2 border rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleAddExpert}
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Add Expert
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+
+
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
