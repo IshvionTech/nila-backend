@@ -70,6 +70,56 @@ app.listen(PORT, async () => {
       );
     `);
 
+
+      await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100),
+        email VARCHAR(150),
+        role VARCHAR(50),
+        status VARCHAR(50),
+        last_active TIMESTAMP
+      );
+    `);
+
+
+     await pool.query(`
+      CREATE TABLE IF NOT EXISTS experts (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(150),
+        title VARCHAR(150),
+        email VARCHAR(150),
+        phone VARCHAR(20),
+        specialization VARCHAR(150),
+        rating INT,
+        patients INT,
+        joined_date DATE,
+        next_available DATE,
+        avatar TEXT
+      );
+    `);
+
+
+        await pool.query(`
+      CREATE TABLE IF NOT EXISTS appointments (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id),
+        expert_id INT REFERENCES experts(id),
+        appointment_date DATE,
+        status VARCHAR(50)
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS payments (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id),
+        amount NUMERIC(10,2),
+        payment_date DATE
+      );
+    `);
+
+
     console.log("Admins table ready");
   } catch (err) {
     console.error("Error creating table:", err);
