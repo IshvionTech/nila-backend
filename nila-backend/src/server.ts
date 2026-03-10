@@ -120,6 +120,26 @@ app.listen(PORT, async () => {
     `);
 
 
+    await pool.query(`
+CREATE TABLE IF NOT EXISTS upcoming_appointments (
+  id SERIAL PRIMARY KEY,
+  patient_name VARCHAR(150),
+  session_type VARCHAR(100),
+  appointment_date DATE,
+  appointment_time TIME,
+  status VARCHAR(50)
+);
+`);
+
+await pool.query(`
+CREATE TABLE IF NOT EXISTS expert_availability (
+  id SERIAL PRIMARY KEY,
+  expert_name VARCHAR(150),
+  specialization VARCHAR(150),
+  is_available BOOLEAN DEFAULT true
+);
+`);
+
     console.log("Admins table ready");
   } catch (err) {
     console.error("Error creating table:", err);
