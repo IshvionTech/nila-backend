@@ -32,12 +32,15 @@ router.post("/", async (req, res) => {
       notes
     } = req.body;
 
+     // convert 5:00 AM → 05:00:00
+    const parsedTime = new Date(`1970-01-01 ${time}`).toTimeString().slice(0,8);
+
     const result = await pool.query(
       `INSERT INTO clinic_appointments
       (patient_name, patient_id, therapist_name, appointment_date, appointment_time, duration, status, type, notes)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
       RETURNING *`,
-      [patientName, patientId, therapistName, date, time, duration, status, type, notes]
+      [patientName, patientId, therapistName, date, parsedTime, duration, status, type, notes]
     );
 
     res.status(201).json(result.rows[0]);
