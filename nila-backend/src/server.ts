@@ -1,11 +1,14 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+
 import authRoutes from "./routes/auth.routes";
 import expertRoutes from "./routes/expert.routes";
 import userRoutes from "./routes/users.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import appointmentsRoutes from "./routes/appointments.routes";
+
+import pool from "./db";   // ✅ import database pool
 
 dotenv.config();
 
@@ -46,11 +49,29 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
-});
+//});
 
 
 // app.listen(5000, () => {
 //   console.log("Server running on port 5000");
 // });
+
+
+   //  Create table automatically
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id SERIAL PRIMARY KEY,
+        phone VARCHAR(20) UNIQUE,
+        otp VARCHAR(10),
+        otp_expiry TIMESTAMP
+      );
+    `);
+
+    console.log("Admins table ready");
+  } catch (err) {
+    console.error("Error creating table:", err);
+  }
+});
