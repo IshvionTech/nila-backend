@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getExperts } from "../controllers/expert.controller";
 // import { getExperts } from "../controllers/expert.controller";
+import pool from "../db";
 
 const router = Router();
 
@@ -9,5 +10,24 @@ router.get("/", getExperts);
 //   console.log("Experts route hit");
 //   res.send("Experts working");
 // });
+
+router.post("/", async (req, res) => {
+  try {
+    const { name, title, email, phone, specialty } = req.body
+
+    const result = await pool.query(
+      `INSERT INTO experts (name,title,email,phone,specialization,rating,patients,joined_date)
+       VALUES ($1,$2,$3,$4,$5,0,0,CURRENT_DATE)
+       RETURNING *`,
+      [name, title, email, phone, specialty]
+    )
+
+    res.json(result.rows[0])
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Failed to add expert" })
+  }
+})
 
 export default router;
