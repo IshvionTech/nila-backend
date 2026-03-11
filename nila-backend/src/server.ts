@@ -94,7 +94,7 @@ app.listen(PORT, async () => {
         rating INT,
         patients INT,
         joined_date DATE,
-        next_available DATE,
+        next_available TIMESTAMP,
         avatar TEXT
       );
     `);
