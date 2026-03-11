@@ -135,9 +135,9 @@ useEffect(() => {
         status: expert.status || "active",
         specialty: [expert.specialization],
         rating: Number(expert.rating),
-        patients: Number(expert.patient),
-        joinedDate: expert.joineddate,
-        nextAvailable: expert.nextavailable,
+        patients: Number(expert.patients),
+        joinedDate: expert.joined_date,
+        nextAvailable: expert.next_available,
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
           expert.name
         )}&background=0ea5e9&color=fff&bold=true`,
