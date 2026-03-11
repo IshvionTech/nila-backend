@@ -83,7 +83,7 @@ const handleAddExpert = async () => {
     const data = await res.json()
 
     const formatted: Expert = {
-      id: data.id.toString(),
+      id: String(data.id),
       name: data.name,
       title: data.title,
       email: data.email,
