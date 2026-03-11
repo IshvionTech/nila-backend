@@ -88,12 +88,12 @@ const handleAddExpert = async () => {
       title: data.title,
       email: data.email,
       phone: data.phone,
-      status: newExpert.status as ExpertStatus,
-      specialty: [newExpert.specialty as ExpertSpecialty],
-      rating: newExpert.rating,
-      patients: newExpert.patients,
-      joinedDate:  newExpert.joinedDate,
-      nextAvailable: newExpert.nextAvailable,
+      status: data.status || "active",
+      specialty: [data.specialization],
+      rating: Number(data.rating),
+      patients: Number(data.patients),
+      joinedDate: data.joined_date,
+      nextAvailable: data.next_available,
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}`
     }
 
