@@ -99,6 +99,10 @@ app.listen(PORT, async () => {
       );
     `);
 
+await pool.query(`
+ALTER TABLE experts
+ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'active';
+`);
 
         await pool.query(`
       CREATE TABLE IF NOT EXISTS appointments (
