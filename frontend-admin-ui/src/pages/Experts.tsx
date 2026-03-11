@@ -89,7 +89,7 @@ const handleAddExpert = async () => {
       email: data.email,
       phone: data.phone,
       status: data.status || "active",
-      specialty: [data.specialization],
+      specialty: [data.specialization || data.specialty],
       rating: Number(data.rating),
       patients: Number(data.patients),
       joinedDate: data.joined_date,
