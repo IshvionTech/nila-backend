@@ -173,10 +173,10 @@ useEffect(() => {
 
   const filteredExperts = experts.filter(expert => {
     const matchesSearch = 
-      expert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expert.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expert.id.toLowerCase().includes(searchTerm.toLowerCase())
+     (expert.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (expert.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (expert.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (expert.id || "").toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesStatus = selectedStatus === 'all' || expert.status === selectedStatus
     const matchesSpecialty = selectedSpecialty === 'all' || expert.specialty.includes(selectedSpecialty)
