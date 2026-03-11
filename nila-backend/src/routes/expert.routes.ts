@@ -13,13 +13,13 @@ router.get("/", getExperts);
 
 router.post("/", async (req, res) => {
   try {
-    const { name, title, email, phone, specialty } = req.body
+    const { name, title, email, phone, specialty, rating, patients, joinedDate, nextAvailable } = req.body
 
     const result = await pool.query(
       `INSERT INTO experts (name,title,email,phone,specialization,rating,patients,joined_date)
-       VALUES ($1,$2,$3,$4,$5,0,0,CURRENT_DATE)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
        RETURNING *`,
-      [name, title, email, phone, specialty]
+      [name, title, email, phone, specialty, rating , patients,joinedDate, nextAvailable ]
     )
 
     res.json(result.rows[0])
