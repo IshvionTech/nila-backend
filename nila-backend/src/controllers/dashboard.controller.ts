@@ -60,7 +60,7 @@ export const getExpertAvailability = async (req: Request, res: Response) => {
         name AS "expertName",
         speciality AS specialization,
         is_available AS "isAvailable"
-      FROM expert
+      FROM experts
       LIMIT 5
     `);
 
