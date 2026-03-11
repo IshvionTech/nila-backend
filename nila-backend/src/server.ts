@@ -103,6 +103,10 @@ await pool.query(`
 ALTER TABLE experts
 ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'active';
 `);
+await pool.query(`
+ALTER TABLE experts
+ALTER COLUMN rating TYPE NUMERIC(2,1);
+`);
 
         await pool.query(`
       CREATE TABLE IF NOT EXISTS appointments (
