@@ -65,8 +65,8 @@ const [newExpert, setNewExpert] = useState({
   phone: "",
   specialty: "psychology",
   status: "active",
-  rating: 0,
-  patients: 0,
+  rating: "",
+  patients: "",
   joinedDate: "",
   nextAvailable: ""
 })
@@ -92,8 +92,8 @@ const handleAddExpert = async () => {
       phone: data.phone,
       status: data.status || "active",
       specialty: [data.specialization || data.specialty],
-      rating: data.rating ? Number(data.rating): 0,
-      patients: data.patients ? Number(data.patients) : 0,
+      rating: newExpert.rating ? Number(data.rating): 0,
+      patients: newExpert.patients ? Number(data.patients) : 0,
       joinedDate: data.joined_date,
       nextAvailable: data.next_available,
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}`
@@ -215,17 +215,21 @@ useEffect(() => {
 
 
 const exportExperts = () => {
-  const csv = experts.map(e =>
+  const headers = "Name,Email,Phone,Status\n"
+  const csv =  headers + experts.map(e =>
     `${e.name},${e.email},${e.phone},${e.status}`
   ).join("\n")
 
-  const blob = new Blob([csv], { type: "text/csv" })
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
   const url = URL.createObjectURL(blob)
 
-  const a = document.createElement("a")
-  a.href = url
-  a.download = "experts.csv"
-  a.click()
+  const link = document.createElement("a")
+  link.href = url
+  link.download = "experts.csv"
+
+  document.body.appendChild(link) 
+  link.click()
+  document.body.removeChild(link)
 }
 
 if (loading) {
@@ -332,6 +336,7 @@ if (loading) {
   <option value="inactive">Inactive</option>
 </select>
 
+<label className="text-sm font-medium">Next Available</label>
 <input
   type="datetime-local"
   className="w-full border p-2 rounded"
@@ -349,7 +354,7 @@ if (loading) {
   onChange={(e) =>
     setNewExpert({ 
       ...newExpert, 
-      rating: Number(e.target.value)
+      rating: e.target.value
      })
   }
 />
@@ -362,11 +367,12 @@ if (loading) {
   onChange={(e) =>
     setNewExpert({
        ...newExpert,
-        patients: Number(e.target.value) 
+        patients: e.target.value 
       })
   }
 />
 
+<label className="text-sm font-medium">Joined Date</label>
 <input
   type="date"
   className="w-full border p-2 rounded"
