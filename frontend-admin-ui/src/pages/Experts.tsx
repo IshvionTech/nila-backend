@@ -54,6 +54,7 @@ const [loading, setLoading] = useState(true);
 
 
 
+  const [logs, setLogs] = useState<string[]>([])
 
 const [openDialog, setOpenDialog] = useState(false)
 
@@ -82,6 +83,7 @@ const handleAddExpert = async () => {
 
     const data = await res.json()
 
+   
     const formatted: Expert = {
       id: String(data.id),
       name: data.name,
@@ -90,14 +92,20 @@ const handleAddExpert = async () => {
       phone: data.phone,
       status: data.status || "active",
       specialty: [data.specialization || data.specialty],
-      rating: Number(data.rating),
-      patients: Number(data.patients),
+      rating: data.rating ? Number(data.rating): 0,
+      patients: data.patients ? Number(data.patients) : 0,
       joinedDate: data.joined_date,
       nextAvailable: data.next_available,
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}`
     }
 
     setExperts(prev => [...prev, formatted])
+
+     setLogs(prev => [
+      ...prev,
+      `Expert ${data.name} added at ${new Date().toLocaleString()}`
+    ])
+
     setOpenDialog(false)
 
   } catch (err) {
@@ -134,8 +142,10 @@ useEffect(() => {
         phone: expert.phone,
         status: expert.status || "active",
         specialty: [expert.specialization],
-        rating: Number(expert.rating),
-        patients: Number(expert.patients),
+        rating: expert.rating ? Number(expert.rating) : 0,
+        patients: expert.patients ? Number(expert.patients) : 0,
+       // rating: Number(expert.rating),
+        //patients: Number(expert.patients),
         joinedDate: expert.joined_date,
         nextAvailable: expert.next_available,
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -200,6 +210,27 @@ useEffect(() => {
     }
   }
 
+
+
+
+
+const exportExperts = () => {
+  const csv = experts.map(e =>
+    `${e.name},${e.email},${e.phone},${e.status}`
+  ).join("\n")
+
+  const blob = new Blob([csv], { type: "text/csv" })
+  const url = URL.createObjectURL(blob)
+
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "experts.csv"
+  a.click()
+}
+
+if (loading) {
+  return <div className="text-center p-10">Loading experts...</div>
+}
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -209,10 +240,12 @@ useEffect(() => {
           <p className="text-gray-600 mt-1">Manage therapists, psychologists, and counselors</p>
         </div>
         <div className="mt-4 md:mt-0 flex space-x-3">
-          <button className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 flex items-center">
+          <button onClick ={exportExperts}
+           className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 flex items-center">
             <Filter className="h-4 w-4 mr-2" />
             Export List
           </button>
+          
           <button onClick={() => setOpenDialog(true)}
           className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 flex items-center shadow-lg hover:shadow-xl transition-all">
             <Plus className="h-5 w-5 mr-2" />
@@ -314,7 +347,10 @@ useEffect(() => {
   className="w-full border p-2 rounded"
   value={newExpert.rating}
   onChange={(e) =>
-    setNewExpert({ ...newExpert, rating: Number(e.target.value) })
+    setNewExpert({ 
+      ...newExpert, 
+      rating: Number(e.target.value)
+     })
   }
 />
 
@@ -324,7 +360,10 @@ useEffect(() => {
   className="w-full border p-2 rounded"
   value={newExpert.patients}
   onChange={(e) =>
-    setNewExpert({ ...newExpert, patients: Number(e.target.value) })
+    setNewExpert({
+       ...newExpert,
+        patients: Number(e.target.value) 
+      })
   }
 />
 
