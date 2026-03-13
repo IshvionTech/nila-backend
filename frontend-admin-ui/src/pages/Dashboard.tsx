@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext'
 import { useState, useEffect } from 'react';
 
 
-const [activities, setActivities] = useState<any[]>([]);
 
 useEffect(() => {
   fetch(`${API_URL}/api/dashboard/activity`)
@@ -18,6 +17,12 @@ const API_URL = import.meta.env.VITE_API_URL;
 export default function Dashboard() {
   const { user } = useAuth()
   const [statsData, setStatsData] = useState<any>(null);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [upcoming, setUpcoming] = useState<any[]>([]);
+  const [availability, setAvailability] = useState<any[]>([]);
+  const [overview, setOverview] = useState<any[]>([]);
+
+
 
   useEffect(() => {
     fetch(`${API_URL}/api/dashboard/stats`)
@@ -64,8 +69,7 @@ export default function Dashboard() {
   ] : [];
 
 
-  const [upcoming, setUpcoming] = useState<any[]>([]);
-  const [availability, setAvailability] = useState<any[]>([]);
+  
   
 
 useEffect(() => {
@@ -83,7 +87,6 @@ useEffect(() => {
 }, []);
 
 
-const [overview, setOverview] = useState<any[]>([]);
 useEffect(() => {
     fetch(`${API_URL}/api/dashboard/overview`)
   //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/overview")
