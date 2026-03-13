@@ -102,7 +102,7 @@ export default function Appointments() {
   patient_id: formData.patientId,
   therapist_name: formData.therapistName,
   appointment_date: formData.date,
-  appointments_time: formData.time,
+  appointment_time: formData.time,
   duration: formData.duration  ? Number(formData.duration) : 0,
   status: formData.status,
   type: formData.type,
@@ -305,9 +305,12 @@ const handleExport = () => {
 
       {/* New Appointment Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+        onClick={()=>setShowModal(false)}>
+          <div className="bg-white p-6 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}>
             <h2 className="text-xl font-bold mb-4">New Appointment</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
 
             <div className="space-y-3">
                <label className="block text-sm font-medium mb-1">
@@ -320,7 +323,8 @@ const handleExport = () => {
                 value={formData.patientName}
                 onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
               />
-
+              </div>
+  <div>
                <label className="block text-sm font-medium mb-1">
                   Patient ID
                  </label>
@@ -331,7 +335,11 @@ const handleExport = () => {
                 value={formData.patientId}
                 onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
               />
-
+              </div>
+              <div>
+          <label className="block text-sm font-medium mb-1">
+            Therapist
+          </label>
               <select
   className="w-full border p-2 rounded"
   value={formData.therapistName}
@@ -346,6 +354,7 @@ const handleExport = () => {
     </option>
   ))}
 </select>
+    </div>
 <div className="mb-3">
                   <label className="block text-sm font-medium mb-1">
     Appointment Date
@@ -357,6 +366,11 @@ const handleExport = () => {
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               />
               </div>
+
+              <div>
+          <label className="block text-sm font-medium mb-1">
+            Appointment Time
+          </label>
 <select
   className="w-full border p-2 rounded"
   value={formData.time}
@@ -371,7 +385,7 @@ const handleExport = () => {
     </option>
   ))}
 </select>
-
+  </div>
 
 <div className="mb-3">
   <label className="block text-sm font-medium mb-1">
@@ -431,7 +445,7 @@ const handleExport = () => {
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               />
               </div>
-            </div>
+            
 
             <div className="flex justify-end mt-4 space-x-3">
               <button
@@ -447,6 +461,7 @@ const handleExport = () => {
                 Save
               </button>
             </div>
+            </form>
           </div>
         </div>
       )}
