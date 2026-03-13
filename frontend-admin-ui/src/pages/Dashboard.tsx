@@ -5,11 +5,7 @@ import { useState, useEffect } from 'react';
 
 
 
-useEffect(() => {
-  fetch(`${API_URL}/api/dashboard/activity`)
-    .then(res => res.json())
-    .then(data => setActivities(data));
-}, []);
+
 
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -23,7 +19,7 @@ export default function Dashboard() {
   const [overview, setOverview] = useState<any[]>([]);
 
 
-
+// Dashboard stats
   useEffect(() => {
     fetch(`${API_URL}/api/dashboard/stats`)
     //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/stats")
@@ -32,6 +28,38 @@ export default function Dashboard() {
       .then(data => setStatsData(data))
       .catch(err => console.error(err));
   }, []);
+
+  // Activity logs
+  useEffect(() => {
+  fetch(`${API_URL}/api/dashboard/activity`)
+    .then(res => res.json())
+    .then(data => setActivities(data));
+}, []);
+
+  // Upcoming + availability
+useEffect(() => {
+  fetch(`${API_URL}/api/dashboard/upcoming`)
+  //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/upcoming")
+  //fetch("http://localhost:5000/api/dashboard/upcoming")
+    .then(res => res.json())
+    .then(data => setUpcoming(data));
+
+    fetch(`${API_URL}/api/dashboard/availability`)
+   // fetch("https://nila-backend-yzem.onrender.com/api.dashboard/availability")
+  //fetch("http://localhost:5000/api/dashboard/availability")
+    .then(res => res.json())
+    .then(data => setAvailability(data));
+}, []);
+
+
+  // Overview
+useEffect(() => {
+    fetch(`${API_URL}/api/dashboard/overview`)
+  //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/overview")
+  //fetch("http://localhost:5000/api/dashboard/overview")
+    .then(res => res.json())
+    .then(data => setOverview(data));
+}, []);
 
   const stats = statsData ? [
     {
@@ -72,28 +100,8 @@ export default function Dashboard() {
   
   
 
-useEffect(() => {
-  fetch(`${API_URL}/api/dashboard/upcoming`)
-  //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/upcoming")
-  //fetch("http://localhost:5000/api/dashboard/upcoming")
-    .then(res => res.json())
-    .then(data => setUpcoming(data));
-
-    fetch(`${API_URL}/api/dashboard/availability`)
-   // fetch("https://nila-backend-yzem.onrender.com/api.dashboard/availability")
-  //fetch("http://localhost:5000/api/dashboard/availability")
-    .then(res => res.json())
-    .then(data => setAvailability(data));
-}, []);
 
 
-useEffect(() => {
-    fetch(`${API_URL}/api/dashboard/overview`)
-  //fetch("https://nila-backend-yzem.onrender.com/api/dashboard/overview")
-  //fetch("http://localhost:5000/api/dashboard/overview")
-    .then(res => res.json())
-    .then(data => setOverview(data));
-}, []);
 
   return (
     <div className="space-y-6">
