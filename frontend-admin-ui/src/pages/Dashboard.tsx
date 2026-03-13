@@ -65,6 +65,7 @@ export default function Dashboard() {
 
   const [upcoming, setUpcoming] = useState<any[]>([]);
   const [availability, setAvailability] = useState<any[]>([]);
+  
 
 useEffect(() => {
   fetch(`${API_URL}/api/dashboard/upcoming`)

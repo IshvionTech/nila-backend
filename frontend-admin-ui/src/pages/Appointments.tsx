@@ -42,6 +42,7 @@ export default function Appointments() {
   const [selectedStatus, setSelectedStatus] = useState<AppointmentStatus | 'all'>('all')
   const [selectedDate, setSelectedDate] = useState<string>('today')
   const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [logs, setLogs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ export default function Appointments() {
     time: '',
     duration: 60,
     status: 'scheduled',
-    type: 'therapy',
+    type: 'Consultation',
     notes: ''
   })
 
@@ -92,16 +93,17 @@ export default function Appointments() {
     }
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+     e.preventDefault();
     try {
       // Map frontend camelCase to backend snake_case
-      const appointmentData = {
-  patientName: formData.patientName,
-  patientId: formData.patientId,
-  therapistName: formData.therapistName,
-  date: formData.date,
-  time: formData.time,
-  duration: formData.duration,
+      const newAppointment = {
+  patient_name: formData.patientName,
+  patient_id: formData.patientId,
+  therapist_name: formData.therapistName,
+  appointment_date: formData.date,
+  appointments_time: formData.time,
+  duration: formData.duration  ? Number(formData.duration) : 0,
   status: formData.status,
   type: formData.type,
   notes: formData.notes
@@ -114,29 +116,36 @@ export default function Appointments() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(appointmentData)
+        body: JSON.stringify(newAppointment)
       });
 
       if (!res.ok) throw new Error('Failed to create appointment');
       
-      const newAppointment = await res.json();
+      const data = await res.json();
       
-      // Map the response similarly
-      const mappedNewAppointment = {
-        id: newAppointment.id,
-        patientName: newAppointment.patient_name || '',
-        patientId: newAppointment.patient_id || '',
-        therapistName: newAppointment.therapist_name || '',
-        date: newAppointment.appointment_date ? newAppointment.appointment_date.split('T')[0] : '',
-        time: newAppointment.appointment_time ? newAppointment.appointment_time.substring(0, 5) : '',
-        duration: newAppointment.duration || 0,
-        status: newAppointment.status || 'scheduled',
-        type: newAppointment.type || 'therapy',
-        notes: newAppointment.notes || ''
-      };
+      // update appointment list
+    setAppointments((prev: any) => [...prev, data]);
+
+    // admin log
+    const logMessage = `Appointment created for ${formData.patientName} at ${new Date().toLocaleString()}`;
+    setLogs((prev: string[]) => [...prev, logMessage]);
+
+      // // Map the response similarly
+      // const mappedNewAppointment = {
+      //   id: newAppointment.id,
+      //   patientName: newAppointment.patient_name || '',
+      //   patientId: newAppointment.patient_id || '',
+      //   therapistName: newAppointment.therapist_name || '',
+      //   date: newAppointment.appointment_date ? newAppointment.appointment_date.split('T')[0] : '',
+      //   time: newAppointment.appointment_time ? newAppointment.appointment_time.substring(0, 5) : '',
+      //   duration: newAppointment.duration || 0,
+      //   status: newAppointment.status || 'scheduled',
+      //   type: newAppointment.type || 'therapy',
+      //   notes: newAppointment.notes || ''
+      // };
       
-      setAppointments([mappedNewAppointment, ...appointments]);
-      setShowModal(false);
+      // setAppointments([mappedNewAppointment, ...appointments]);
+      // setShowModal(false);
       
       // Reset form
       setFormData({
@@ -147,7 +156,7 @@ export default function Appointments() {
         time: '',
         duration: 60,
         status: 'scheduled',
-        type: 'therapy',
+        type: 'Consultation',
         notes: ''
       });
     } catch (err) {
@@ -213,6 +222,7 @@ export default function Appointments() {
     { label: 'Confirmed', value: appointments.filter(a => a.status === 'confirmed').length, color: 'bg-green-500' },
     { label: 'Today', value: appointments.filter(a => a.date === new Date().toISOString().split('T')[0]).length, color: 'bg-purple-500' },
   ]
+
 
 
   const therapists = [
@@ -300,6 +310,9 @@ const handleExport = () => {
             <h2 className="text-xl font-bold mb-4">New Appointment</h2>
 
             <div className="space-y-3">
+               <label className="block text-sm font-medium mb-1">
+                  Patient Name
+               </label>
               <input
                 type="text"
                 placeholder="Patient Name"
@@ -308,6 +321,9 @@ const handleExport = () => {
                 onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
               />
 
+               <label className="block text-sm font-medium mb-1">
+                  Patient ID
+                 </label>
               <input
                 type="text"
                 placeholder="Patient ID"
@@ -330,13 +346,17 @@ const handleExport = () => {
     </option>
   ))}
 </select>
-
+<div className="mb-3">
+                  <label className="block text-sm font-medium mb-1">
+    Appointment Date
+  </label>
               <input
                 type="date"
                 className="w-full border p-2 rounded"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               />
+              </div>
 <select
   className="w-full border p-2 rounded"
   value={formData.time}
@@ -352,6 +372,11 @@ const handleExport = () => {
   ))}
 </select>
 
+
+<div className="mb-3">
+  <label className="block text-sm font-medium mb-1">
+    Duration (minutes)
+  </label>
               <input
                 type="number"
                 placeholder="Duration (minutes)"
@@ -359,7 +384,12 @@ const handleExport = () => {
                 value={formData.duration}
                 onChange={(e) => setFormData({ ...formData, duration: Number(e.target.value) })}
               />
+</div>
 
+<div className="mb-3">
+  <label className="block text-sm font-medium mb-1">
+    Appointment Status
+  </label>
               <select
                 className="w-full border p-2 rounded"
                 value={formData.status}
@@ -371,7 +401,12 @@ const handleExport = () => {
                 <option value="cancelled">Cancelled</option>
                 <option value="no-show">No Show</option>
               </select>
+</div>
 
+<div className="mb-3">
+  <label className="block text-sm font-medium mb-1">
+    Appointment Type
+  </label>
               <select
                 className="w-full border p-2 rounded"
                 value={formData.type}
@@ -382,7 +417,12 @@ const handleExport = () => {
                 <option value="follow-up">Follow-up</option>
                 <option value="assessment">Assessment</option>
               </select>
+</div>
 
+<div className="mb-3">
+  <label className="block text-sm font-medium mb-1">
+    Notes
+  </label>
               <textarea
                 placeholder="Notes"
                 className="w-full border p-2 rounded"
@@ -390,6 +430,7 @@ const handleExport = () => {
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               />
+              </div>
             </div>
 
             <div className="flex justify-end mt-4 space-x-3">
@@ -537,13 +578,13 @@ const handleExport = () => {
                         </span>
                       </td>
                       <td className="py-4 px-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${typeColors[apt.type] || 'bg-gray-100 text-gray-800'}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${typeColors[apt.type as keyof typeof typeColors] || 'bg-gray-100 text-gray-800'}`}>
                           {apt.type || 'N/A'}
                         </span>
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center ${statusColors[apt.status] || 'bg-gray-100 text-gray-800'}`}>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center ${statusColors[apt.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
                             {getStatusIcon(apt.status)}
                             <span className="ml-1 capitalize">{apt.status || 'N/A'}</span>
                           </span>
@@ -650,7 +691,7 @@ const handleExport = () => {
               .map((apt) => (
                 <div key={apt.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:bg-gray-50">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${typeColors[apt.type] || 'bg-gray-100'}`}>
+                    <div className={`p-2 rounded-lg ${typeColors[apt.type as keyof typeof typeColors] || 'bg-gray-100'}`}>
                       <Calendar className="h-4 w-4" />
                     </div>
                     <div>
