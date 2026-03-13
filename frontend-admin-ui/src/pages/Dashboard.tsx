@@ -3,13 +3,14 @@ import Card from '../components/Card'
 import { useAuth } from '../contexts/AuthContext'
 import { useEffect, useState } from "react";
 
-const activities = [
-  { id: 1, action: 'New user registration', time: '2 hours ago', icon: Users },
-  { id: 2, action: 'Appointment scheduled', time: '3 hours ago', icon: Calendar },
-  { id: 3, action: 'Payment received', time: '4 hours ago', icon: DollarSign },
-  { id: 4, action: 'Expert profile updated', time: '5 hours ago', icon: UserCircle },
-  { id: 5, action: 'New therapist joined', time: '6 hours ago', icon: UserCircle },
-]
+
+const [activities, setActivities] = useState<any[]>([]);
+
+useEffect(() => {
+  fetch(`${API_URL}/api/dashboard/activity`)
+    .then(res => res.json())
+    .then(data => setActivities(data));
+}, []);
 
 
 const API_URL = import.meta.env.VITE_API_URL;
