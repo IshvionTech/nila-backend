@@ -1,7 +1,7 @@
 import { Users, UserCircle, Calendar, DollarSign, TrendingUp, TrendingDown, Clock, Activity } from 'lucide-react'
 import Card from '../components/Card'
 import { useAuth } from '../contexts/AuthContext'
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
 
 
 const [activities, setActivities] = useState<any[]>([]);
