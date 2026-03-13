@@ -43,6 +43,10 @@ router.post("/", async (req, res) => {
       [patientName, patientId, therapistName, date, parsedTime, duration, status, type, notes]
     );
 
+    await pool.query(
+  `INSERT INTO activity_logs (action) VALUES ($1)`,
+  [`Appointment created for ${patientName} with ${therapistName}`]
+);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);

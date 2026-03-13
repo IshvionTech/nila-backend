@@ -169,6 +169,14 @@ CREATE TABLE IF NOT EXISTS expert_availability (
   );
 `);  
 
+  await pool.query(`
+CREATE TABLE IF NOT EXISTS activity_logs (
+  id SERIAL PRIMARY KEY,
+  action TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+`);
+
     console.log("All table ready");
   } catch (err) {
     console.error("Error creating table:", err);
