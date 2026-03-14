@@ -166,19 +166,20 @@ const chartData = overview.map((item) => ({
             <h2 className="text-xl font-bold text-gray-900 mb-6">
               Appointments Overview
             </h2>
-
-
-            <div className="h-64">
-  <ResponsiveContainer width="100%" height="100%">
-    <BarChart data={chartData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="date" />
-      <YAxis />
-      <Tooltip />
-      <Bar dataKey="appointments" fill="#3b82f6" radius={[4,4,0,0]} />
-    </BarChart>
-  </ResponsiveContainer>
-</div>
+            <div className="w-full h-[300px]">
+              {chartData.length> 0 && (
+              <ResponsiveContainer width="100%" height="100%">
+                 <BarChart data={chartData}>
+                 <CartesianGrid strokeDasharray="3 3" />
+                 <XAxis dataKey="date" />
+                 <YAxis />
+                 <Tooltip />
+                 <Bar dataKey="appointments" fill="#3b82f6" radius={[4,4,0,0]} />
+                 </BarChart>
+              </ResponsiveContainer>  
+              )}         
+            </div>
+          </Card>  
 
             {/* <div className="flex items-end justify-between h-48">
               {overview.map((item, index) => {
@@ -198,7 +199,6 @@ const chartData = overview.map((item) => ({
                 );
               })}
             </div> */}
-          </Card>
         </div>
 
         {/* Activity */}
