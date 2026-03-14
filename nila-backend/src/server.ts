@@ -8,7 +8,7 @@ import userRoutes from "./routes/users.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import appointmentsRoutes from "./routes/appointments.routes";
 
-import pool from "./db";   // ✅ import database pool
+import pool from "./db";  
 
 dotenv.config();
 

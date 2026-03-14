@@ -21,11 +21,11 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const {
-      patientName,
-      patientId,
-      therapistName,
-      date,
-      time,
+      patient_name,
+      patient_id,
+      therapist_name,
+      appointment_date,
+      appointment_time,
       duration,
       status,
       type,
@@ -33,19 +33,19 @@ router.post("/", async (req, res) => {
     } = req.body;
 
      // convert 5:00 AM → 05:00:00
-    const parsedTime = new Date(`1970-01-01 ${time}`).toTimeString().slice(0,8);
+    const parsedTime = new Date(`1970-01-01 ${appointment_time}`).toTimeString().slice(0,8);
 
     const result = await pool.query(
       `INSERT INTO clinic_appointments
       (patient_name, patient_id, therapist_name, appointment_date, appointment_time, duration, status, type, notes)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
       RETURNING *`,
-      [patientName, patientId, therapistName, date, parsedTime, duration, status, type, notes]
+      [patient_name, patient_id, therapist_name, appointment_date, parsedTime, duration, status, type, notes]
     );
 
     await pool.query(
   `INSERT INTO activity_logs (action) VALUES ($1)`,
-  [`Appointment created for ${patientName} with ${therapistName}`]
+  [`Appointment created for ${patient_name} with ${therapist_name}`]
 );
     res.status(201).json(result.rows[0]);
   } catch (err) {
