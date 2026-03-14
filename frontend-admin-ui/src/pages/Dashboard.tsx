@@ -2,6 +2,7 @@ import { Users, UserCircle, Calendar, DollarSign, TrendingUp, TrendingDown, Cloc
 import Card from "../components/Card";
 import { useAuth } from "../contexts/AuthContext";
 import { useState, useEffect } from "react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 
@@ -95,6 +96,11 @@ export default function Dashboard() {
         },
       ]
     : [];
+const chartData = overview.map((item) => ({
+  date: new Date(item.date).toLocaleDateString(),
+  appointments: Number(item.count),
+}));
+
 
   return (
     <div className="space-y-6">
@@ -161,7 +167,20 @@ export default function Dashboard() {
               Appointments Overview
             </h2>
 
-            <div className="flex items-end justify-between h-48">
+
+            <div className="h-64">
+  <ResponsiveContainer width="100%" height="100%">
+    <BarChart data={chartData}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="date" />
+      <YAxis />
+      <Tooltip />
+      <Bar dataKey="appointments" fill="#3b82f6" radius={[4,4,0,0]} />
+    </BarChart>
+  </ResponsiveContainer>
+</div>
+
+            {/* <div className="flex items-end justify-between h-48">
               {overview.map((item, index) => {
                 const height = Number(item.count) * 20;
 
@@ -178,7 +197,7 @@ export default function Dashboard() {
                   </div>
                 );
               })}
-            </div>
+            </div> */}
           </Card>
         </div>
 
