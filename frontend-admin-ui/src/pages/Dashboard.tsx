@@ -59,7 +59,7 @@ export default function Dashboard() {
       date: apt.date,
       time: apt.time,
       status: apt.status || "scheduled",
-      type: apt.sessionTtype || "consultation"
+      type: apt.type || "consultation"
     }));
     setUpcoming(mapped);
   })
@@ -74,7 +74,7 @@ export default function Dashboard() {
       expertName: exp.expertName || exp.name,
       specialization: exp.specialization || exp.specialty,
       nextAvailable: exp.nextAvailable || exp.next_available,
-      isAvailable: exp.status === "available"
+      isAvailable: exp.isavailable
     }));
 
     setAvailability(mapped);
