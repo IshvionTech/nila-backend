@@ -72,18 +72,45 @@ export default function Appointments() {
       const data = await res.json()
       
       // Map snake_case from backend to camelCase for frontend
-      const mappedData = data.map((apt: any) => ({
+      const mappedData = data.map((apt: any) => {
+        const dateObj = apt.appointment_date
+        ? new Date(
+        Number(apt.appointment_date) < 10000000000
+          ? Number(apt.appointment_date) * 1000
+          : Number(apt.appointment_date)
+      )
+    : null;
+    return {
         id: apt.id,
         patientName: apt.patient_name || '',
         patientId: apt.patient_id || '',
         therapistName: apt.therapist_name || '',
-        date: apt.appointment_date ? apt.appointment_date.split('T')[0] : '',
-        time: apt.appointment_time ? apt.appointment_time.substring(0, 5) : '',
+
+         date: dateObj
+      ? dateObj.toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        })
+      : '',
+
+    time: dateObj
+      ? dateObj.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      : '',
+
+      //  date: apt.appointment_date ? apt.appointment_date.split('T')[0] : '',
+        //time: apt.appointment_time ? apt.appointment_time.substring(0, 5) : '',
+
+
         duration: apt.duration || 0,
         status: apt.status || 'scheduled',
         type: apt.type || 'therapy',
         notes: apt.notes || ''
-      }))
+      };
+      });
       
       setAppointments(mappedData)
     } catch (err) {
@@ -122,30 +149,16 @@ export default function Appointments() {
       if (!res.ok) throw new Error('Failed to create appointment');
       
       const data = await res.json();
-      
+
+      // ✅ SUCCESS ALERT HERE
+        alert("Appointment created successfully!");
+        
       // update appointment list
     setAppointments((prev: any) => [...prev, data]);
 
     // admin log
     const logMessage = `Appointment created for ${formData.patientName} at ${new Date().toLocaleString()}`;
     setLogs((prev: string[]) => [...prev, logMessage]);
-
-      // // Map the response similarly
-      // const mappedNewAppointment = {
-      //   id: newAppointment.id,
-      //   patientName: newAppointment.patient_name || '',
-      //   patientId: newAppointment.patient_id || '',
-      //   therapistName: newAppointment.therapist_name || '',
-      //   date: newAppointment.appointment_date ? newAppointment.appointment_date.split('T')[0] : '',
-      //   time: newAppointment.appointment_time ? newAppointment.appointment_time.substring(0, 5) : '',
-      //   duration: newAppointment.duration || 0,
-      //   status: newAppointment.status || 'scheduled',
-      //   type: newAppointment.type || 'therapy',
-      //   notes: newAppointment.notes || ''
-      // };
-      
-      // setAppointments([mappedNewAppointment, ...appointments]);
-      // setShowModal(false);
       
       // Reset form
       setFormData({

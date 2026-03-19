@@ -226,13 +226,13 @@ const today = new Date().toISOString().split('T')[0];
             <h2 className="text-xl font-bold text-gray-900 mb-6">
               Appointments Overview
             </h2>
-            <div className="w-full h-[300px]">
+            <div className="w-full h-[300px] min-h-[300px]">
 
                {/* DEBUG LINE */}
               <p>Chart Data Length: {chartData.length}</p>
 
               {chartData.length> 0 && (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={300} >
                  <BarChart data={chartData}>
                  <CartesianGrid strokeDasharray="3 3" />
                  <XAxis dataKey="date" />

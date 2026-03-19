@@ -105,10 +105,16 @@ const handleAddExpert = async () => {
       `Expert ${data.name} added at ${new Date().toLocaleString()}`
     ])
 
+    // ✅ SUCCESS ALERT
+    alert("✅ Expert added successfully!")
+
     setOpenDialog(false)
 
   } catch (err) {
     console.error("Add expert failed", err)
+
+     // ❌ ERROR ALERT
+    alert("❌ Failed to add expert")
   }
 }
 
@@ -554,7 +560,9 @@ if (loading) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-gray-500">Next Available</p>
-                    <p className="text-sm font-medium text-gray-900">{expert.nextAvailable}</p>
+                    <p className="text-sm font-medium text-gray-900">{expert.nextAvailable ? new Date(Number(expert.nextAvailable)).toLocaleString()
+                      : 'N/A'}
+                     </p>
                   </div>
                   <Calendar className="h-5 w-5 text-gray-400" />
                 </div>
