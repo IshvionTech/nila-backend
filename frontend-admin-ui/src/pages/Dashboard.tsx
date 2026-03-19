@@ -23,6 +23,13 @@ export default function Dashboard() {
     return Activity;
   };
 
+  const typeColors = {
+    therapy: 'bg-indigo-50 text-indigo-700',
+    consultation: 'bg-cyan-50 text-cyan-700',
+    'follow-up': 'bg-emerald-50 text-emerald-700',
+    assessment: 'bg-amber-50 text-amber-700'
+  }
+
   // Dashboard stats
   useEffect(() => {
     fetch(`${API_URL}/api/dashboard/stats`)
@@ -237,8 +244,35 @@ const chartData = overview.map((item) => ({
 
       {/* Upcoming appointments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        <Card>
+<Card>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Appointments</h3>
+          <div className="space-y-4">
+            {upcoming
+              .filter(a => a.status === 'scheduled' || a.status === 'confirmed')
+              .slice(0, 4)
+              .map((apt) => (
+                <div key={apt.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:bg-gray-50">
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-lg ${typeColors[apt.type as keyof typeof typeColors] || 'bg-gray-100'}`}>
+                      <Calendar className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{apt.patientName || 'N/A'}</p>
+                      <p className="text-xs text-gray-500">with {apt.therapistName || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-gray-900">{apt.time || 'N/A'}</p>
+                    <p className="text-xs text-gray-500">{apt.date || 'N/A'}</p>
+                  </div>
+                </div>
+              ))}
+            {upcoming.filter(a => a.status === 'scheduled' || a.status === 'confirmed').length === 0 && (
+              <p className="text-gray-500 text-center py-4">No upcoming appointments</p>
+            )}
+          </div>
+        </Card>
+        {/* <Card>
           <h2 className="text-xl font-bold text-gray-900 mb-6">
             Upcoming Appointments
           </h2>
@@ -262,7 +296,7 @@ const chartData = overview.map((item) => ({
               </div>
             ))}
           </div>
-        </Card>
+        </Card> */}
 
         <Card>
           <h2 className="text-xl font-bold text-gray-900 mb-6">
@@ -281,12 +315,13 @@ const chartData = overview.map((item) => ({
 
                 <span
                   className={`text-xs px-2 py-1 rounded ${
-                    expert.isAvailable
+                    expert.isAvailable === true || expert.isAvailable === "true" || expert.isAvailable === 1
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
                   }`}
                 >
-                  {expert.isAvailable ? "Available" : "Not Available"}
+                  {expert.isAvailable=== true || expert.isAvailable === "true" || expert.isAvailable === 1
+                   ? "Available" : "Not Available"}
                 </span>
               </div>
             ))}
