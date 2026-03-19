@@ -1,4 +1,5 @@
 import { Users, UserCircle, Calendar, DollarSign, TrendingUp, TrendingDown, Clock, Activity } from "lucide-react";
+import {  CheckCircle, XCircle } from "lucide-react";
 import Card from "../components/Card";
 import { useAuth } from "../contexts/AuthContext";
 import { useState, useEffect } from "react";
@@ -50,14 +51,52 @@ export default function Dashboard() {
   useEffect(() => {
     fetch(`${API_URL}/api/dashboard/upcoming`)
       .then((res) => res.json())
-      .then((data) => setUpcoming(data))
+      .then((data) => {
+    const mapped = data.map((apt: any) => ({
+      id: apt.id,
+      patientName: apt.patient_name,
+      therapistName: apt.therapist_name,
+      date: apt.appointment_date?.split('T')[0],
+      time: apt.appointment_time?.substring(0, 5),
+      status: apt.status,
+      type: apt.type
+    }));
+    setUpcoming(mapped);
+  })
+      //.then((data) => setUpcoming(data))
       .catch((err) => console.error(err));
 
     fetch(`${API_URL}/api/dashboard/availability`)
       .then((res) => res.json())
-      .then((data) => setAvailability(data))
+      .then((data) => {
+    const mapped = data.map((exp: any) => ({
+      id: exp.id,
+      expertName: exp.expertName || exp.name,
+      specialization: exp.specialization || exp.specialty,
+      nextAvailable: exp.nextAvailable || exp.next_available,
+      isAvailable: 
+       exp.isAvailable === true ||
+    exp.isAvailable === "true" ||
+    exp.isAvailable === 1 ||
+    exp.available === true ||
+    exp.available === "true" ||
+    exp.available === 1
+    }));
+
+    setAvailability(mapped);
+  })
+      
+      //.then((data) => setAvailability(data))
       .catch((err) => console.error(err));
   }, []);
+
+  useEffect(() => {
+  console.log("Upcoming API Data:", upcoming);
+}, [upcoming]);
+
+useEffect(() => {
+  console.log("Availability API:", availability);
+}, [availability]);
 
   // Appointment overview chart
   useEffect(() => {
@@ -108,6 +147,7 @@ const chartData = overview.map((item) => ({
   appointments: Number(item.count),
 }));
 
+const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="space-y-6">
@@ -244,11 +284,55 @@ const chartData = overview.map((item) => ({
 
       {/* Upcoming appointments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-<Card>
+        <Card>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4"> Upcoming Appointments  </h3>
+            <div className="space-y-4">
+              {(() => {    const filteredAppointments = upcoming.filter(
+          (a) =>  (a.status === "scheduled" || a.status === "confirmed") && a.date && a.date >= today ).slice(0, 4);
+
+               if (filteredAppointments.length === 0) {
+              return (
+                 <p className="text-gray-500 text-center py-4"> No upcoming appointment  </p>
+                     );
+                   }
+      return filteredAppointments.map((apt) => (
+        <div  key={apt.id}
+          className="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:bg-gray-50" >
+          {/* Left */}
+          <div className="flex items-center space-x-3">
+            <div className={`p-2 rounded-lg ${
+                typeColors[apt.type as keyof typeof typeColors] || "bg-gray-100" }`} >
+                   <Calendar className="h-4 w-4" />
+            </div>
+
+            <div>
+              <p className="font-medium text-gray-900">
+                {apt.patientName || "N/A"}
+              </p>
+              <p className="text-xs text-gray-500">  with {apt.therapistName || "N/A"}  </p>
+            </div>
+          </div>
+
+          {/* Right */}
+          <div className="text-right">
+            <p className="font-medium text-gray-900">
+              {apt.time || "N/A"}
+            </p>
+            <p className="text-xs text-gray-500">
+              {apt.date || "N/A"}
+            </p>
+          </div>
+        </div>
+      ));
+    })()}
+  </div>
+</Card>
+        
+{/* <Card>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Appointments</h3>
-          <div className="space-y-4">
+          <div className="space-y-4">           
             {upcoming
-              .filter(a => a.status === 'scheduled' || a.status === 'confirmed')
+              .filter(a => (a.status === 'scheduled' || a.status === 'confirmed')  &&  a.date >= today)
               .slice(0, 4)
               .map((apt) => (
                 <div key={apt.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:bg-gray-50">
@@ -271,7 +355,10 @@ const chartData = overview.map((item) => ({
               <p className="text-gray-500 text-center py-4">No upcoming appointments</p>
             )}
           </div>
-        </Card>
+          
+        </Card> */}
+
+
         {/* <Card>
           <h2 className="text-xl font-bold text-gray-900 mb-6">
             Upcoming Appointments
@@ -298,7 +385,80 @@ const chartData = overview.map((item) => ({
           </div>
         </Card> */}
 
-        <Card>
+
+
+<Card>
+      <h2 className="text-xl font-bold text-gray-900 mb-6"> Expert Availability </h2>
+
+      <div className="space-y-4">
+        {availability.length === 0 && (
+          <p className="text-gray-500 text-center py-4"> No expert data available </p>
+        )}
+
+        {availability.map((expert: any) => {
+          const isAvailable = expert.isAvailable;
+
+          return (
+            <div
+              key={expert.id}
+              className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:shadow-md transition-all bg-white">
+              {/* LEFT */}
+              <div className="flex items-center space-x-3">
+                {/* Avatar */}
+                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 font-semibold">
+                    {expert.expertName?.charAt(0) || "E"}
+                  </span>
+                </div>
+
+                {/* Info */}
+                <div>
+                  <p className="font-medium text-gray-900">
+                    {expert.expertName || "Unknown"}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {expert.specialization || "No specialization"}
+                  </p>
+                </div>
+              </div>
+
+              {/* RIGHT */}
+              <div className="flex items-center space-x-3">
+                {/* Next Available Time */}
+                {expert.nextAvailable && (
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500">Next Slot</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {new Date(expert.nextAvailable).toLocaleTimeString([], {  hour: "2-digit", minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                )}
+
+                {/* Status Badge */}
+                <span
+                  className={`flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full ${
+                    isAvailable
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {isAvailable ? (
+                    <CheckCircle className="h-3 w-3" />
+                  ) : (
+                    <XCircle className="h-3 w-3" />
+                  )}
+                  {isAvailable ? "Available" : "Not Available"}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+
+
+        {/* <Card>
           <h2 className="text-xl font-bold text-gray-900 mb-6">
             Expert Availability
           </h2>
@@ -326,7 +486,7 @@ const chartData = overview.map((item) => ({
               </div>
             ))}
           </div>
-        </Card>
+        </Card> */}
 
       </div>
 
