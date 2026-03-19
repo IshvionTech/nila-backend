@@ -38,7 +38,7 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
         session_type AS "sessionType",
         TO_CHAR(appointment_time, 'HH12:MI AM') AS "time",
         appointment_date AS "date"
-      FROM upcoming_appointments
+      FROM clinic_appointments
       WHERE appointment_date >= CURRENT_DATE
       ORDER BY appointment_date, appointment_time
       LIMIT 5
@@ -59,6 +59,11 @@ export const getExpertAvailability = async (req: Request, res: Response) => {
         id,
         name AS "expertName",
         specialization,
+         next_available AS "nextAvailable",
+        CASE 
+          WHEN status = 'active' THEN true
+          ELSE false
+        END AS "isAvailable"
         status
         FROM experts
       LIMIT 5
