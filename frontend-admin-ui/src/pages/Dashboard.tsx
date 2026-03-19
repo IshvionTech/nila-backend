@@ -52,6 +52,12 @@ export default function Dashboard() {
     fetch(`${API_URL}/api/dashboard/upcoming`)
       .then((res) => res.json())
       .then((data) => {
+
+        if (!Array.isArray(data)) {
+      console.error("Invalid API response:", data);
+      return;
+    }
+
     const mapped = data.map((apt: any) => ({
       id: apt.id,
       patientName: apt.patientName,
@@ -69,12 +75,18 @@ export default function Dashboard() {
     fetch(`${API_URL}/api/dashboard/availability`)
       .then((res) => res.json())
       .then((data) => {
+
+        if (!Array.isArray(data)) {
+      console.error("Invalid Availability API:", data);
+      return;
+    }
+
     const mapped = data.map((exp: any) => ({
       id: exp.id,
       expertName: exp.expertName || exp.name,
       specialization: exp.specialization || exp.specialty,
       nextAvailable: exp.nextAvailable || exp.next_available,
-      isAvailable: exp.isavailable
+      isAvailable: exp.status === "active"
     }));
 
     setAvailability(mapped);
