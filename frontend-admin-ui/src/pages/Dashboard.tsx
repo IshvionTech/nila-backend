@@ -104,6 +104,10 @@ useEffect(() => {
   console.log("Availability API:", availability);
 }, [availability]);
 
+useEffect(() => {
+  console.log("Overview API:", overview);
+}, [overview]);
+
   // Appointment overview chart
   useEffect(() => {
     fetch(`${API_URL}/api/dashboard/overview`)
@@ -148,10 +152,13 @@ useEffect(() => {
         },
       ]
     : [];
-const chartData = overview.map((item) => ({
-  date: new Date(item.date).toLocaleDateString(),
-  appointments: Number(item.count),
-}));
+
+const chartData = Array.isArray(overview)
+  ? overview.map((item) => ({
+      date: new Date(item.date).toLocaleDateString(),
+      appointments: Number(item.count),
+    }))
+  : [];
 
 const today = new Date().toISOString().split('T')[0];
 
@@ -220,6 +227,10 @@ const today = new Date().toISOString().split('T')[0];
               Appointments Overview
             </h2>
             <div className="w-full h-[300px]">
+
+               {/* DEBUG LINE */}
+              <p>Chart Data Length: {chartData.length}</p>
+
               {chartData.length> 0 && (
               <ResponsiveContainer width="100%" height="100%">
                  <BarChart data={chartData}>

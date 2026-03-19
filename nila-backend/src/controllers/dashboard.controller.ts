@@ -80,7 +80,7 @@ export const getAppointmentsOverview = async (req: Request, res: Response) => {
       SELECT 
         appointment_date AS "date",
         COUNT(*) AS "count"
-      FROM upcoming_appointments
+      FROM clinic_appointments
       WHERE appointment_date >= CURRENT_DATE - INTERVAL '6 days'
       GROUP BY appointment_date
       ORDER BY appointment_date
