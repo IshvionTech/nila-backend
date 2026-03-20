@@ -12,3 +12,19 @@ export const getExperts = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const deleteExpert = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query("DELETE FROM experts WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Expert not found" });
+    }
+    res.json({ message: "Expert deleted successfully" });
+  } catch (error) {
+    console.error("Delete error:", error);
+    res.status(500).json({ message: "Failed to delete expert" });
+  }
+};

@@ -3,7 +3,11 @@ import { getExperts } from "../controllers/expert.controller";
 // import { getExperts } from "../controllers/expert.controller";
 import pool from "../db";
 
+import { deleteExpert } from "../controllers/expert.controller";
+
 const router = Router();
+
+router.delete("/:id", deleteExpert);
 
 router.get("/", getExperts);
 // router.get("/", (req, res) => {
