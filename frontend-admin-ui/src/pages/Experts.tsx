@@ -217,6 +217,41 @@ useEffect(() => {
 
 
 
+    const handleDeleteExpert = async (id: string, name: string) => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
+
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`${API_URL}/experts/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to delete");
+    }
+
+    // Remove from UI
+    setExperts(prev => prev.filter(e => e.id !== id));
+
+    // Log
+    setLogs(prev => [
+      ...prev,
+      `Expert ${name} deleted at ${new Date().toLocaleString()}`
+    ]);
+
+    // ✅ Success alert
+    alert("✅ Expert deleted successfully!");
+
+  } catch (error) {
+    console.error("Delete failed:", error);
+
+    // ❌ Error alert
+    alert("❌ Failed to delete expert");
+  }
+};
+
+
 
 
 const exportExperts = () => {
@@ -580,7 +615,9 @@ if (loading) {
                   <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Edit">
                     <Edit className="h-4 w-4" />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                  <button  
+                    onClick={() => handleDeleteExpert(expert.id, expert.name)}
+                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
