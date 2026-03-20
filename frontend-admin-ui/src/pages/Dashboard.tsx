@@ -286,8 +286,9 @@ const today = new Date().toISOString().split('T')[0];
         <Card>
             <h3 className="text-lg font-semibold text-gray-900 mb-4"> Upcoming Appointments  </h3>
             <div className="space-y-4">
-              {(() => {    const filteredAppointments = upcoming.filter(
-          (a) =>  (a.status === "scheduled" || a.status === "confirmed") && a.date && a.date >= today ).slice(0, 4);
+              {(() => {    
+                const filteredAppointments = upcoming.filter(
+          (a) =>  (a.status === "scheduled" || a.status === "confirmed") && a.date &&  new Date(a.date) >= new Date(today) ).slice(0, 4);
 
                if (filteredAppointments.length === 0) {
               return (
@@ -318,7 +319,7 @@ const today = new Date().toISOString().split('T')[0];
               {apt.time || "N/A"}
             </p>
             <p className="text-xs text-gray-500">
-              {apt.date || "N/A"}
+              {apt.date  ? new Date(apt.date).toISOString().split("T")[0] : "N/A"}
             </p>
           </div>
         </div>
@@ -369,8 +370,8 @@ const today = new Date().toISOString().split('T')[0];
                   <div className="text-right">
                     <p className="text-xs text-gray-500">Next Slot</p>
                     <p className="text-sm font-medium text-gray-900">
-                      {new Date(expert.nextAvailable).toLocaleTimeString([], {  hour: "2-digit", minute: "2-digit",
-                      })}
+                      {new Date(expert.nextAvailable).toLocaleTimeString([], {
+                   hour: "2-digit", minute: "2-digit"  })}
                     </p>
                   </div>
                 )}

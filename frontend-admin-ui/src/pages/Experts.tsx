@@ -560,7 +560,7 @@ if (loading) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-gray-500">Next Available</p>
-                    <p className="text-sm font-medium text-gray-900">{expert.nextAvailable ? new Date(Number(expert.nextAvailable)).toLocaleString()
+                    <p className="text-sm font-medium text-gray-900">{expert.nextAvailable ? new Date(expert.nextAvailable).toLocaleString("en-IN")
                       : 'N/A'}
                      </p>
                   </div>
