@@ -38,7 +38,7 @@ const Payment = () => {
       // ✅ Step 1: Create order
       const { data } = await axios.post(
         `${API_URL}/api/payment/create-order`,
-        { amount, patientName, patientId }
+        { patientName, patientId }
       );
 
       const options = {
