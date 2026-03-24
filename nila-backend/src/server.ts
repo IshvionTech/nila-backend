@@ -23,7 +23,7 @@ const corsOptions = {
      "https://nila-backend.vercel.app",
      
     "https://nila-frontend-ui-admin-5b8cwjsnd-sivasakthidharans-projects.vercel.app",
-    "https://nila-frontend-ui-nila-maylbluai-sivasakthidharans-projects.vercel.app",
+    "https://nila-fontend-frontend-ojp0tgapw-sivasakthidharans-projects.vercel.app",
   /vercel\.app$/ ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -184,6 +184,8 @@ CREATE TABLE IF NOT EXISTS activity_logs (
 await pool.query(`
   CREATE TABLE IF NOT EXISTS payments (
   id SERIAL PRIMARY KEY,
+  patient_name VARCHAR(150),
+  patient_id VARCHAR(50),
   amount INT,
   payment_id VARCHAR(255),
   order_id VARCHAR(255),

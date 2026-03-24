@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 //import Razorpay from "razorpay";
 import crypto from "crypto";
+import pool from "../db";
 
 const Razorpay = require("razorpay");
 
@@ -11,12 +12,20 @@ const razorpay = new Razorpay({
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { amount } = req.body;
+    const { amount, patientName, patientId } = req.body;
+
+    if (!amount || !patientName || !patientId) {
+         return res.status(400).json({ message: "Missing required fields" });
+        }
 
     const order = await razorpay.orders.create({
       amount: amount * 100,
       currency: "INR",
       receipt: "receipt_" + Date.now(),
+      notes: {
+        patientName,
+        patientId,
+      },
     });
 
     res.json(order);
@@ -31,6 +40,10 @@ export const verifyPayment = async (req: Request, res: Response) => {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
+      patientName,
+      patientId,
+      amount
+
     } = req.body;
 
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -41,6 +54,22 @@ export const verifyPayment = async (req: Request, res: Response) => {
       .digest("hex");
 
     if (expectedSign === razorpay_signature) {
+
+        console.log("Payment verified for:", patientName, patientId); 
+        
+        await pool.query(
+    `INSERT INTO payments 
+     (patient_name, patient_id, amount, payment_id, order_id, status)
+     VALUES ($1, $2, $3, $4, $5, $6)`,
+    [
+      patientName,
+      patientId,
+      amount,
+      razorpay_payment_id,
+      razorpay_order_id,
+      "SUCCESS"
+    ]
+  );
       // TODO: Save to DB
       res.json({ success: true });
     } else {
