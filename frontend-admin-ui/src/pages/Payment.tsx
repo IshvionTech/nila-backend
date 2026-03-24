@@ -22,7 +22,7 @@ const Payment = () => {
    useEffect(() => {
     loadRazorpay();
   }, []);
-  
+
   const handlePayment = async () => {
     try {
       if (!patientName || !patientId) {
@@ -39,6 +39,8 @@ const Payment = () => {
 
       const amount = 200;
 
+         console.log("KEY:", import.meta.env.VITE_RAZORPAY_KEY);
+         
       // ✅ Step 1: Create order
       const { data } = await axios.post(
         `${API_URL}/api/payment/create-order`,
