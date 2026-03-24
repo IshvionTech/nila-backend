@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -19,6 +19,10 @@ const Payment = () => {
     });
   };
 
+   useEffect(() => {
+    loadRazorpay();
+  }, []);
+  
   const handlePayment = async () => {
     try {
       if (!patientName || !patientId) {
@@ -33,12 +37,12 @@ const Payment = () => {
         return;
       }
 
-      const amount = 500;
+      const amount = 200;
 
       // ✅ Step 1: Create order
       const { data } = await axios.post(
         `${API_URL}/api/payment/create-order`,
-        { patientName, patientId }
+        { amount, patientName, patientId }
       );
 
       const options = {
