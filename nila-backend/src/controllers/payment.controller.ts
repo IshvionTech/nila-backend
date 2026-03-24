@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-//import Razorpay from "razorpay";
 import crypto from "crypto";
 import pool from "../db";
 
@@ -12,12 +11,17 @@ const razorpay = new Razorpay({
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { amount, patientName, patientId } = req.body;
+     console.log("ENV CHECK:", process.env.RAZORPAY_KEY_ID);
+    const { patientName, patientId } = req.body;
 
-    if (!amount || !patientName || !patientId) {
+      //  FIXED amount (avoid frontend tampering)
+     const amount = 200;
+       //  Validation
+    if (!patientName || !patientId) {
          return res.status(400).json({ message: "Missing required fields" });
         }
 
+         // Create Razorpay order
     const order = await razorpay.orders.create({
       amount: amount * 100,
       currency: "INR",
@@ -30,6 +34,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     res.json(order);
   } catch (error) {
+    console.error("CREATE ORDER ERROR:", error);
     res.status(500).json({ message: "Error creating order" });
   }
 };
@@ -42,9 +47,9 @@ export const verifyPayment = async (req: Request, res: Response) => {
       razorpay_signature,
       patientName,
       patientId,
-      amount
-
     } = req.body;
+
+    const amount = 200; // 🔒 keep consistent
 
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -56,7 +61,8 @@ export const verifyPayment = async (req: Request, res: Response) => {
     if (expectedSign === razorpay_signature) {
 
         console.log("Payment verified for:", patientName, patientId); 
-        
+
+      // Save to DB
         await pool.query(
     `INSERT INTO payments 
      (patient_name, patient_id, amount, payment_id, order_id, status)
@@ -73,9 +79,11 @@ export const verifyPayment = async (req: Request, res: Response) => {
       // TODO: Save to DB
       res.json({ success: true });
     } else {
+        console.log("Payment FAILED for:", patientName, patientId);
       res.json({ success: false });
     }
   } catch (error) {
+    console.error("VERIFY PAYMENT ERROR:", error);
     res.status(500).json({ message: "Verification failed" });
   }
 };
