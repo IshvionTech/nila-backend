@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard'
 import Users from './pages/Users'
 import Experts from './pages/Experts'
 import Appointments from './pages/Appointments'
+import Payment from './pages/Payment'
 import './App.css'
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
               <Route path="users" element={<Users />} />
               <Route path="experts" element={<Experts />} />
               <Route path="appointments" element={<Appointments />} />
+              <Route path="/payments" element={<Payment />} />
             </Route>
           </Route>
         </Routes>
