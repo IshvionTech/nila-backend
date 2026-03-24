@@ -23,7 +23,7 @@ const corsOptions = {
      "https://nila-backend.vercel.app",
      
     "https://nila-frontend-ui-admin-5b8cwjsnd-sivasakthidharans-projects.vercel.app",
-    "https://nila-frontend-admin-ib4rpnx1d-sivasakthidharans-projects.vercel.app",
+    "https://nila-frontend-frontend-i6k48lhb5-sivasakthidharans-projects.vercel.app",
   /vercel\.app$/ ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -127,14 +127,14 @@ ALTER COLUMN rating TYPE NUMERIC(2,1);
       );
     `);
 
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS payments (
-        id SERIAL PRIMARY KEY,
-        user_id INT REFERENCES users(id),
-        amount NUMERIC(10,2),
-        payment_date DATE
-      );
-    `);
+    // await pool.query(`
+    //   CREATE TABLE IF NOT EXISTS payments (
+    //     id SERIAL PRIMARY KEY,
+    //     user_id INT REFERENCES users(id),
+    //     amount NUMERIC(10,2),
+    //     payment_date DATE
+    //   );
+    // `);
 
 
     await pool.query(`
