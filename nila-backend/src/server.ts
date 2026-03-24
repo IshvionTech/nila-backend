@@ -8,6 +8,8 @@ import userRoutes from "./routes/users.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import appointmentsRoutes from "./routes/appointments.routes";
 
+import paymentRoutes from "./routes/payment.routes";
+
 import pool from "./db";  
 
 dotenv.config();
@@ -21,6 +23,7 @@ const corsOptions = {
      "https://nila-backend.vercel.app",
      
     "https://nila-frontend-ui-admin-5b8cwjsnd-sivasakthidharans-projects.vercel.app",
+    "https://nila-frontend-admin-ib4rpnx1d-sivasakthidharans-projects.vercel.app",
   /vercel\.app$/ ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -39,6 +42,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/appointments", appointmentsRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // Add this test route
 app.get("/test", (req, res) => {
@@ -175,6 +179,17 @@ CREATE TABLE IF NOT EXISTS activity_logs (
   action TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+`);
+
+await pool.query(`
+  CREATE TABLE IF NOT EXISTS payments (
+  id SERIAL PRIMARY KEY,
+  amount INT,
+  payment_id VARCHAR(255),
+  order_id VARCHAR(255),
+  status VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
     console.log("All table ready");
