@@ -12,7 +12,7 @@ const razorpay = new Razorpay({
 export const createOrder = async (req: Request, res: Response) => {
   try {
      console.log("ENV CHECK:", process.env.RAZORPAY_KEY_ID);
-    const { patientName, patientId } = req.body;
+     const { patientName, patientId } = req.body;
 
       //  FIXED amount (avoid frontend tampering)
      const amount = 200;
@@ -39,6 +39,40 @@ export const createOrder = async (req: Request, res: Response) => {
   }
 };
 
+export const cashPayment = async (req: Request, res: Response) => {
+  try {
+    const { patientName, patientId, amount } = req.body;
+
+    if (!patientName || !patientId) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+
+    console.log("Cash payment for:", patientName, patientId);
+
+    // Save in DB
+    await pool.query(
+      `INSERT INTO payments 
+       (patient_name, patient_id, amount, payment_id, order_id, status, payment_method)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        patientName,
+        patientId,
+        amount,
+        null,   // no payment id
+        null,   // no order id
+        "CASH_SUCCESS",
+        "CASH"
+      ]
+    );
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.error("CASH PAYMENT ERROR:", error);
+    res.status(500).json({ message: "Cash payment failed" });
+  }
+};
+
 export const verifyPayment = async (req: Request, res: Response) => {
   try {
     const {
@@ -58,6 +92,8 @@ export const verifyPayment = async (req: Request, res: Response) => {
       .update(sign)
       .digest("hex");
 
+      console.log("SIGN CHECK:", expectedSign, razorpay_signature);
+
     if (expectedSign === razorpay_signature) {
 
         console.log("Payment verified for:", patientName, patientId); 
@@ -65,15 +101,16 @@ export const verifyPayment = async (req: Request, res: Response) => {
       // Save to DB
         await pool.query(
     `INSERT INTO payments 
-     (patient_name, patient_id, amount, payment_id, order_id, status)
-     VALUES ($1, $2, $3, $4, $5, $6)`,
+     (patient_name, patient_id, amount, payment_id, order_id, status, payment_method)
+     VALUES ($1, $2, $3, $4, $5, $6,  $7)`,
     [
       patientName,
       patientId,
       amount,
       razorpay_payment_id,
       razorpay_order_id,
-      "SUCCESS"
+      "SUCCESS",
+      "RAZORPAY"
     ]
   );
       // TODO: Save to DB
