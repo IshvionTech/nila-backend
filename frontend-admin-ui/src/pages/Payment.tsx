@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+
+const [paymentMethod, setPaymentMethod] = useState("razorpay");
 const Payment = () => {
 
   const [patientName, setPatientName] = useState("");
@@ -30,14 +32,30 @@ const Payment = () => {
         return;
       }
 
+         const amount = 200;
+ //  CASH PAYMENT
+    if (paymentMethod === "cash") {
+      // You can also call backend API here to save order
+      alert("Payment Successful ✅ (Cash)");
+
+      // Optional: send to backend
+      await axios.post(`${API_URL}/api/payment/cash-payment`, {
+        patientName,
+        patientId,
+        amount,
+        paymentMethod: "cash",
+      });
+
+      return;
+    }
+
+     //  RAZORPAY PAYMENT
       const loaded = await loadRazorpay();
 
       if (!loaded) {
         alert("Razorpay SDK failed to load");
         return;
       }
-
-      const amount = 200;
 
          console.log("KEY:", import.meta.env.VITE_RAZORPAY_KEY);
          
@@ -123,6 +141,32 @@ const Payment = () => {
         <div className="text-2xl font-bold text-indigo-600 mb-4 text-center">
           ₹200
         </div>
+
+        <div className="mb-4">
+  <label className="block mb-2 font-semibold">Select Payment Method</label>
+
+  <div className="flex gap-4">
+    <label>
+      <input
+        type="radio"
+        value="razorpay"
+        checked={paymentMethod === "razorpay"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      <span className="ml-2">Online (Razorpay)</span>
+    </label>
+
+    <label>
+      <input
+        type="radio"
+        value="cash"
+        checked={paymentMethod === "cash"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      <span className="ml-2">Cash</span>
+    </label>
+  </div>
+</div>
 
         <button
           onClick={handlePayment}
