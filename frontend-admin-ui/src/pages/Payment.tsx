@@ -3,12 +3,10 @@ import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
-const [paymentMethod, setPaymentMethod] = useState("razorpay");
 const Payment = () => {
-
   const [patientName, setPatientName] = useState("");
   const [patientId, setPatientId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
 
   // ✅ Load Razorpay script dynamically
   const loadRazorpay = () => {
@@ -36,27 +34,34 @@ const Payment = () => {
  //  CASH PAYMENT
     if (paymentMethod === "cash") {
       // You can also call backend API here to save order
-      alert("Payment Successful ✅ (Cash)");
+    //  alert("Payment Successful ✅ (Cash)");
 
       // Optional: send to backend
-      await axios.post(`${API_URL}/api/payment/cash-payment`, {
+      const res = await axios.post(`${API_URL}/api/payment/cash-payment`, {
         patientName,
         patientId,
         amount,
         paymentMethod: "cash",
       });
-
+      
+      if (res.data.success) {
+        alert("Payment Successful ✅ (Cash)");
+      } else {
+        alert("Cash Payment Failed ❌");
+      }
       return;
     }
 
      //  RAZORPAY PAYMENT
-      const loaded = await loadRazorpay();
-
-      if (!loaded) {
-        alert("Razorpay SDK failed to load");
-        return;
-      }
-
+     // const loaded = await loadRazorpay();
+if (!(window as any).Razorpay) {
+  alert("Razorpay not loaded");
+  return;
+}
+      // if (!loaded) {
+      //   alert("Razorpay SDK failed to load");
+      //   return;
+      // }
          console.log("KEY:", import.meta.env.VITE_RAZORPAY_KEY);
          
       // ✅ Step 1: Create order
@@ -105,9 +110,11 @@ const Payment = () => {
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
 
-    } catch (err) {
+    } catch (err:any) {
       console.error(err);
-      alert("Something went wrong");
+      console.error("FULL ERROR:", err?.response?.data || err.message);
+      alert("Error: " + (err?.response?.data?.message || "Something went wrong"));
+      //alert("Something went wrong");
     }
   };
 
