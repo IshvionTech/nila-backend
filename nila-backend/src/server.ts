@@ -195,8 +195,13 @@ await pool.query(`
 `);
 
 await pool.query(`
-ALTER TABLE payments
-ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS patient_name VARCHAR(150);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS patient_id VARCHAR(50);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS payment_id VARCHAR(255);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS order_id VARCHAR(255);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS status VARCHAR(50);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS amount INT;
 `);
 
 
