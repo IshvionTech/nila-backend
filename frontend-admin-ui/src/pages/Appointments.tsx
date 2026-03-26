@@ -1,18 +1,5 @@
 import { useState, useEffect } from 'react'
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  UserCircle, 
-  Filter, 
-  Search, 
-  Plus,
-  CheckCircle,
-  XCircle,
-  Clock as ClockIcon,
-  MoreVertical,
-  Download
-} from 'lucide-react'
+import { Calendar, Clock, User, UserCircle, Filter, Search, Plus, CheckCircle, XCircle, Clock as ClockIcon, MoreVertical, Download } from 'lucide-react'
 import Card from '../components/Card'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -20,21 +7,19 @@ type AppointmentStatus = 'scheduled' | 'confirmed' | 'completed' | 'cancelled' |
 type AppointmentType = 'therapy' | 'consultation' | 'follow-up' | 'assessment'
 
 interface Appointment {
-  id: string
-  patientName: string
-  patientId: string
-  therapistName: string
-  date: string
-  time: string
-  duration: number
-  status: AppointmentStatus
-  type: AppointmentType
-  notes?: string
+  id: string;
+  patientName: string;
+  patientId: string;
+  therapistName: string;
+  date: string;
+  time: string;
+  duration: number;
+  status: AppointmentStatus;
+  type: AppointmentType;
+  notes: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-
 
 export default function Appointments() {
   const { user } = useAuth()
@@ -48,93 +33,147 @@ export default function Appointments() {
   const [formData, setFormData] = useState({
     patientName: '',
     patientId: '',
+    phone: '',
     therapistName: '',
     date: '',
     time: '',
     duration: 60,
-    status: 'scheduled',
-    type: 'Consultation',
+    status: 'scheduled' as AppointmentStatus,
+    type: 'consultation' as AppointmentType,
     notes: ''
   })
 
-  // Fetch appointments
+const fetchAppointments = async () => {
+  setLoading(true);
+  try {
+    const res = await fetch(`${API_URL}/api/appointments`);
+    if (!res.ok) throw new Error("Failed to fetch");
+
+    const data = await res.json();
+    console.log("API DATA:", data);
+
+    const mappedData = Array.isArray(data)
+      ? data.map((apt: any) => ({
+          id: apt.id,
+          patientName: apt.patient_name || '',
+          patientId: apt.patient_id || '',
+          therapistName: apt.therapist_name || '',
+          date: apt.appointment_date || '',
+
+          displayDate: apt.appointment_date
+            ? new Date(apt.appointment_date).toLocaleDateString('en-IN')
+            : '',
+          time: apt.appointment_time
+            ? apt.appointment_time.slice(0, 5)
+            : '',
+          duration: apt.duration || 0,
+          status: apt.status || 'scheduled',
+          type: apt.type || 'therapy',
+          notes: apt.notes || ''
+        }))
+      : [];
+
+    setAppointments(mappedData);
+  } catch (err) {
+    console.error("Error fetching appointments:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // const fetchAppointments = async () => {
+  //   setLoading(true)
+  //   try {
+  //     const res = await fetch(`${API_URL}/api/appointments`)
+  //     //const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointment")
+  //    // const res = await fetch("http://localhost:5000/api/appointments")
+  //     if (!res.ok) throw new Error('Failed to fetch')
+  //     const data = await res.json()
+      
+  //     // Map snake_case from backend to camelCase for frontend
+  //     const mappedData = data.map((apt: any) => {
+  //      //   const dateObj = apt.appointment_date
+  //      //    ? new Date(
+  //      //   Number(apt.appointment_date) < 10000000000
+  //      //    ? Number(apt.appointment_date) * 1000
+  //      //     : Number(apt.appointment_date)
+  //      //   )
+  //      // : null;
+  //   return {
+  //       id: apt.id,
+  //       patientName: apt.patient_name || '',
+  //       patientId: apt.patient_id || '',
+  //       therapistName: apt.therapist_name || '',
+  //       date: apt.appointment_date || '',
+  //       time: apt.appointment_time
+  //         ? apt.appointment_time.substring(0, 5)
+  //          : '',
+
+  //       // date: dateObj
+  //     //? dateObj.toLocaleDateString('en-IN', {
+  //       //  day: '2-digit',
+  //         //month: 'short',
+  //         //year: 'numeric'
+  //       //})
+  //     //: '',
+
+  //   // time: dateObj
+  //   //   ? dateObj.toLocaleTimeString('en-IN', {
+  //   //       hour: '2-digit',
+  //   //       minute: '2-digit'
+  //   //     })
+  //   //   : '',
+
+  //       // date: apt.appointment_date ? apt.appointment_date.split('T')[0] : '',
+  //       //time: apt.appointment_time ? apt.appointment_time.substring(0, 5) : '',
+
+  //       duration: apt.duration || 0,
+  //       status: apt.status || 'scheduled',
+  //       type: apt.type || 'therapy',
+  //       notes: apt.notes || ''
+  //     };
+  //     });
+  //     //setAppointments((prev) => [...prev, mappedData]);
+  //     setAppointments(mappedData)
+  //   } catch (err) {
+  //     console.error("Error fetching appointments:", err)
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // };
+
+    // Fetch appointments
   useEffect(() => {
     fetchAppointments()
-  }, [])
-
-  const fetchAppointments = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch(`${API_URL}/api/appointments`)
-      //const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointment")
-     // const res = await fetch("http://localhost:5000/api/appointments")
-      if (!res.ok) throw new Error('Failed to fetch')
-      const data = await res.json()
-      
-      // Map snake_case from backend to camelCase for frontend
-      const mappedData = data.map((apt: any) => {
-        const dateObj = apt.appointment_date
-        ? new Date(
-        Number(apt.appointment_date) < 10000000000
-          ? Number(apt.appointment_date) * 1000
-          : Number(apt.appointment_date)
-      )
-    : null;
-    return {
-        id: apt.id,
-        patientName: apt.patient_name || '',
-        patientId: apt.patient_id || '',
-        therapistName: apt.therapist_name || '',
-
-         date: dateObj
-      ? dateObj.toLocaleDateString('en-IN', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        })
-      : '',
-
-    time: dateObj
-      ? dateObj.toLocaleTimeString('en-IN', {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      : '',
-
-      //  date: apt.appointment_date ? apt.appointment_date.split('T')[0] : '',
-        //time: apt.appointment_time ? apt.appointment_time.substring(0, 5) : '',
+  }, []);
 
 
-        duration: apt.duration || 0,
-        status: apt.status || 'scheduled',
-        type: apt.type || 'therapy',
-        notes: apt.notes || ''
-      };
-      });
-      
-      setAppointments(mappedData)
-    } catch (err) {
-      console.error("Error fetching appointments:", err)
-    } finally {
-      setLoading(false)
-    }
-  }
+   // ✅ Handle form input
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
      e.preventDefault();
     try {
       // Map frontend camelCase to backend snake_case
       const newAppointment = {
-  patient_name: formData.patientName,
-  patient_id: formData.patientId,
-  therapist_name: formData.therapistName,
-  appointment_date: formData.date,
-  appointment_time: formData.time,
-  duration: formData.duration  ? Number(formData.duration) : 0,
-  status: formData.status,
-  type: formData.type,
-  notes: formData.notes
-};
+      patient_name: formData.patientName,
+      patient_id: formData.patientId,
+      phone: formData.phone,
+      therapist_name: formData.therapistName,
+      appointment_date: formData.date,
+      appointment_time: formData.time,
+      duration: formData.duration  ? Number(formData.duration) : 0,
+      status: formData.status,
+      type: formData.type,
+      notes: formData.notes
+      };
 
       const res = await fetch(`${API_URL}/api/appointments`,{
       // const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointments",{
@@ -144,7 +183,7 @@ export default function Appointments() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(newAppointment)
-      });
+        });
 
       if (!res.ok) throw new Error('Failed to create appointment');
       
@@ -153,8 +192,27 @@ export default function Appointments() {
       // ✅ SUCCESS ALERT HERE
         alert("Appointment created successfully!");
         
+
+        const mapped = {
+      id: data.id,
+      patientName: data.patient_name || '',
+      patientId: data.patient_id || '',
+      therapistName: data.therapist_name || '',
+      date: data.appointment_date
+        ? new Date(data.appointment_date).toLocaleDateString('en-IN')
+        : '',
+      time: data.appointment_time
+        ? data.appointment_time.slice(0, 5)
+        : '',
+      duration: data.duration || 0,
+      status: data.status || 'scheduled',
+      type: data.type || 'therapy',
+      notes: data.notes || ''
+    };
+
       // update appointment list
     setAppointments((prev: any) => [...prev, data]);
+    
 
     // admin log
     const logMessage = `Appointment created for ${formData.patientName} at ${new Date().toLocaleString()}`;
@@ -164,12 +222,13 @@ export default function Appointments() {
       setFormData({
         patientName: '',
         patientId: '',
+        phone: '',
         therapistName: '',
         date: '',
         time: '',
         duration: 60,
         status: 'scheduled',
-        type: 'Consultation',
+        type: 'consultation',
         notes: ''
       });
     } catch (err) {
@@ -236,8 +295,6 @@ export default function Appointments() {
     { label: 'Today', value: appointments.filter(a => a.date === new Date().toISOString().split('T')[0]).length, color: 'bg-purple-500' },
   ]
 
-
-
   const therapists = [
   "Dr. Manikandan",
   "Dr. Sarah Wilson",
@@ -257,7 +314,6 @@ export default function Appointments() {
   }
   return times;
 };
-
 
 const handleExport = () => {
   const csvRows = [];
@@ -349,15 +405,26 @@ const handleExport = () => {
                 onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
               />
               </div>
+                <label className="block text-sm font-medium mb-1">
+                  Phone
+                 </label>
+              <input
+             type="text"
+             placeholder="Phone Number"
+              className="w-full border p-2 rounded"
+               value={formData.phone}
+               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+
               <div>
           <label className="block text-sm font-medium mb-1">
             Therapist
           </label>
               <select
-  className="w-full border p-2 rounded"
-  value={formData.therapistName}
-  onChange={(e) =>
-    setFormData({ ...formData, therapistName: e.target.value })
+              className="w-full border p-2 rounded"
+              value={formData.therapistName}
+              onChange={(e) =>
+              setFormData({ ...formData, therapistName: e.target.value })
   }
 >
   <option value="">Select Therapist</option>
@@ -413,14 +480,14 @@ const handleExport = () => {
               />
 </div>
 
-<div className="mb-3">
-  <label className="block text-sm font-medium mb-1">
-    Appointment Status
-  </label>
+          <div className="mb-3">
+              <label className="block text-sm font-medium mb-1">
+                  Appointment Status
+              </label>
               <select
                 className="w-full border p-2 rounded"
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as AppointmentStatus })}
               >
                 <option value="scheduled">Scheduled</option>
                 <option value="confirmed">Confirmed</option>
@@ -428,28 +495,28 @@ const handleExport = () => {
                 <option value="cancelled">Cancelled</option>
                 <option value="no-show">No Show</option>
               </select>
-</div>
+          </div>
 
-<div className="mb-3">
-  <label className="block text-sm font-medium mb-1">
-    Appointment Type
-  </label>
+      <div className="mb-3">
+            <label className="block text-sm font-medium mb-1">
+               Appointment Type
+            </label>
               <select
                 className="w-full border p-2 rounded"
                 value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value  as AppointmentType })}
               >
                 <option value="therapy">Therapy</option>
                 <option value="consultation">Consultation</option>
                 <option value="follow-up">Follow-up</option>
                 <option value="assessment">Assessment</option>
               </select>
-</div>
+        </div>
 
-<div className="mb-3">
-  <label className="block text-sm font-medium mb-1">
-    Notes
-  </label>
+        <div className="mb-3">
+             <label className="block text-sm font-medium mb-1">
+                Notes
+            </label>
               <textarea
                 placeholder="Notes"
                 className="w-full border p-2 rounded"
@@ -468,7 +535,7 @@ const handleExport = () => {
                 Cancel
               </button>
               <button
-                onClick={handleSubmit}
+                type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
                 Save

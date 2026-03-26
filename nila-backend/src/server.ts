@@ -173,6 +173,11 @@ CREATE TABLE IF NOT EXISTS expert_availability (
   );
 `);  
 
+await pool.query(`
+ALTER TABLE clinic_appointments
+ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+`);  
+
   await pool.query(`
 CREATE TABLE IF NOT EXISTS activity_logs (
   id SERIAL PRIMARY KEY,

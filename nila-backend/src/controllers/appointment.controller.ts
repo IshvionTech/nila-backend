@@ -8,6 +8,7 @@ export const getAppointments = async (req: Request, res: Response) => {
         id,
         patient_name AS "patientName",
         patient_id AS "patientId",
+        phone,
         therapist_name AS "therapistName",
         appointment_date AS "date",
         appointment_time AS "time",
