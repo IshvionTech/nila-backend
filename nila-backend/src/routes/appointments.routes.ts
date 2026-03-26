@@ -1,6 +1,8 @@
 import express from "express";
 import { getAppointments } from "../controllers/appointment.controller";
 import  pool  from "../db";
+import { sendOtp, verifyOtp } from "../controllers/appointment.controller";
+
 
 const router = express.Router();
 
@@ -54,6 +56,10 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Failed to create appointment" });
   }
 });
+
+
+router.post("/send-otp", sendOtp);
+router.post("/verify-otp", verifyOtp);
 
 // router.get("/", getAppointments);
 
