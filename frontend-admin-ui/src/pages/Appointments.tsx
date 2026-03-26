@@ -159,45 +159,140 @@ const fetchAppointments = async () => {
       [e.target.name]: e.target.value,
     });
   };
+const [showOtpModal, setShowOtpModal] = useState(false);
 
-
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  try {
-    const newAppointment = {
-      patient_name: formData.patientName,
-      patient_id: formData.patientId,
-      phone: formData.phone,
-      therapist_name: formData.therapistName,
-      appointment_date: formData.date,
-      appointment_time: formData.time,
-      duration: Number(formData.duration) || 0,
-      status: formData.status,
-      type: formData.type,
-      notes: formData.notes
-    };
+if (!formData.phone || formData.phone.length < 10) {
+  alert("Enter valid phone number");
+  return;
+}
 
-    const res = await fetch(`${API_URL}/api/appointments`, {
+  try {
+    // ✅ STEP 1: SEND OTP
+    const res = await fetch(`${API_URL}/api/send-otp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(newAppointment)
+      body: JSON.stringify({
+        phone: formData.phone
+      })
     });
 
-    if (!res.ok) throw new Error('Failed to create appointment');
+    if (!res.ok) throw new Error("Failed to send OTP");
 
-    alert("Appointment created successfully!");
-
-    // ✅ BEST WAY
-    await fetchAppointments();
+    // 👉 Open OTP popup
+    setShowOtpModal(true);
 
   } catch (err) {
     console.error(err);
-    alert("Failed to create appointment.");
+    alert("Failed to send OTP");
   }
 };
+
+const [otp, setOtp] = useState("");
+
+const handleVerifyOtp = async () => {
+  try {
+    // ✅ STEP 2: VERIFY OTP
+    const res = await fetch(`${API_URL}/api/verify-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        phone: formData.phone,
+        otp: otp
+      })
+    });
+
+    if (!res.ok) throw new Error("Invalid OTP");
+
+    // ✅ STEP 3: CREATE APPOINTMENT
+    await createAppointment();
+
+    alert("Appointment created successfully!");
+    setShowOtpModal(false);
+    setOtp("");          // clear OTP
+
+  } catch (err) {
+    console.error(err);
+    alert("Invalid or expired OTP");
+  }
+};
+
+
+const createAppointment = async () => {
+  const newAppointment = {
+    patient_name: formData.patientName,
+    patient_id: formData.patientId,
+    phone: formData.phone,
+    therapist_name: formData.therapistName,
+    appointment_date: formData.date,
+    appointment_time: formData.time,
+    duration: Number(formData.duration) || 0,
+    status: formData.status,
+    type: formData.type,
+    notes: formData.notes
+  };
+
+  const res = await fetch(`${API_URL}/api/appointments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newAppointment)
+  });
+
+  if (!res.ok) throw new Error("Failed to create appointment");
+
+  // refresh list
+  await fetchAppointments();
+};
+
+
+
+
+
+//   const handleSubmit = async (e: React.FormEvent) => {
+//   e.preventDefault();
+
+//   try {
+//     const newAppointment = {
+//       patient_name: formData.patientName,
+//       patient_id: formData.patientId,
+//       phone: formData.phone,
+//       therapist_name: formData.therapistName,
+//       appointment_date: formData.date,
+//       appointment_time: formData.time,
+//       duration: Number(formData.duration) || 0,
+//       status: formData.status,
+//       type: formData.type,
+//       notes: formData.notes
+//     };
+
+//     const res = await fetch(`${API_URL}/api/appointments`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify(newAppointment)
+//     });
+
+//     if (!res.ok) throw new Error('Failed to create appointment');
+
+//     alert("Appointment created successfully!");
+
+//     // ✅ BEST WAY
+//     await fetchAppointments();
+
+//   } catch (err) {
+//     console.error(err);
+//     alert("Failed to create appointment.");
+//   }
+// };
 
 
   // const handleSubmit = async (e: React.FormEvent) => {
@@ -795,6 +890,33 @@ const handleExport = () => {
         )}
       </Card>
 
+
+
+      {showOtpModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h2 className="text-lg font-semibold mb-4">Enter OTP</h2>
+
+      <input
+        type="text"
+        value={otp}
+        onChange={(e) => setOtp(e.target.value)}
+        className="border p-2 w-full mb-4"
+        placeholder="Enter OTP"
+      />
+
+      <button
+        onClick={handleVerifyOtp}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Verify OTP
+      </button>
+    </div>
+  </div>
+)}
+
+
+
       {/* Quick Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
@@ -857,3 +979,4 @@ const handleExport = () => {
     </div>
   )
 }
+
