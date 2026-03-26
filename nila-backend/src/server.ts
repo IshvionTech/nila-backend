@@ -7,9 +7,8 @@ import expertRoutes from "./routes/expert.routes";
 import userRoutes from "./routes/users.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import appointmentsRoutes from "./routes/appointments.routes";
-
 import paymentRoutes from "./routes/payment.routes";
-
+import otpRoutes from "./routes/otp.routes";
 import pool from "./db";  
 
 dotenv.config();
@@ -43,6 +42,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api", otpRoutes);
 
 // Add this test route
 app.get("/test", (req, res) => {
