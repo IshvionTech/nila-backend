@@ -191,7 +191,7 @@ if(!/^\d{10}$/.test(formData.phone))  {
 
     // 👉 Open OTP popup
     setShowOtpModal(true);
-
+    setShowModal(false); 
   } catch (err) {
     console.error("ERROR:", err);
     alert("Failed to send OTP");
@@ -899,7 +899,7 @@ const handleExport = () => {
 
 
       {showOtpModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+  <div className="fixed inset-0  z-[9999]  flex items-center justify-center bg-black bg-opacity-50">
     <div className="bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-lg font-semibold mb-4">Enter OTP</h2>
 
