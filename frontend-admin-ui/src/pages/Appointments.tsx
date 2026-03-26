@@ -164,30 +164,36 @@ const [showOtpModal, setShowOtpModal] = useState(false);
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-if (!formData.phone || formData.phone.length < 10) {
+if(!/^\d{10}$/.test(formData.phone))  {
   alert("Enter valid phone number");
   return;
 }
 
   try {
+        console.log("Sending OTP...");
     // ✅ STEP 1: SEND OTP
     const res = await fetch(`${API_URL}/api/send-otp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        phone: formData.phone
-      })
+      body: JSON.stringify({  phone: formData.phone })
     });
 
-    if (!res.ok) throw new Error("Failed to send OTP");
+     console.log("Response status:", res.status);
+
+       const data = await res.json();
+    console.log("Response data:", data);
+
+    if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+
+        alert("OTP Sent ✅");
 
     // 👉 Open OTP popup
     setShowOtpModal(true);
 
   } catch (err) {
-    console.error(err);
+    console.error("ERROR:", err);
     alert("Failed to send OTP");
   }
 };
