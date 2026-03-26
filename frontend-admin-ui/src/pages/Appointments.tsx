@@ -10,6 +10,7 @@ interface Appointment {
   id: string;
   patientName: string;
   patientId: string;
+  phone: string;  
   therapistName: string;
   date: string;
   time: string;
@@ -57,6 +58,7 @@ const fetchAppointments = async () => {
           id: apt.id,
           patientName: apt.patient_name || '',
           patientId: apt.patient_id || '',
+          phone: apt.phone || '',
           therapistName: apt.therapist_name || '',
           date: apt.appointment_date || '',
 
@@ -158,84 +160,127 @@ const fetchAppointments = async () => {
     });
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
-     e.preventDefault();
-    try {
-      // Map frontend camelCase to backend snake_case
-      const newAppointment = {
+  e.preventDefault();
+
+  try {
+    const newAppointment = {
       patient_name: formData.patientName,
       patient_id: formData.patientId,
       phone: formData.phone,
       therapist_name: formData.therapistName,
       appointment_date: formData.date,
       appointment_time: formData.time,
-      duration: formData.duration  ? Number(formData.duration) : 0,
+      duration: Number(formData.duration) || 0,
       status: formData.status,
       type: formData.type,
       notes: formData.notes
-      };
-
-      const res = await fetch(`${API_URL}/api/appointments`,{
-      // const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointments",{
-     // const res = await fetch("http://localhost:5000/api/appointments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(newAppointment)
-        });
-
-      if (!res.ok) throw new Error('Failed to create appointment');
-      
-      const data = await res.json();
-
-      // ✅ SUCCESS ALERT HERE
-        alert("Appointment created successfully!");
-        
-
-        const mapped = {
-      id: data.id,
-      patientName: data.patient_name || '',
-      patientId: data.patient_id || '',
-      therapistName: data.therapist_name || '',
-      date: data.appointment_date
-        ? new Date(data.appointment_date).toLocaleDateString('en-IN')
-        : '',
-      time: data.appointment_time
-        ? data.appointment_time.slice(0, 5)
-        : '',
-      duration: data.duration || 0,
-      status: data.status || 'scheduled',
-      type: data.type || 'therapy',
-      notes: data.notes || ''
     };
 
-      // update appointment list
-    setAppointments((prev: any) => [...prev, data]);
+    const res = await fetch(`${API_URL}/api/appointments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newAppointment)
+    });
+
+    if (!res.ok) throw new Error('Failed to create appointment');
+
+    alert("Appointment created successfully!");
+
+    // ✅ BEST WAY
+    await fetchAppointments();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to create appointment.");
+  }
+};
+
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //    e.preventDefault();
+  //   try {
+  //     // Map frontend camelCase to backend snake_case
+  //     const newAppointment = {
+  //       patient_name: formData.patientName,
+  //       patient_id: formData.patientId,
+  //       phone: formData.phone,
+  //       therapist_name: formData.therapistName,
+  //       appointment_date: formData.date,
+  //       appointment_time: formData.time,
+  //       duration: formData.duration  ? Number(formData.duration) : 0,
+  //       status: formData.status,
+  //       type: formData.type,
+  //       notes: formData.notes
+  //     };
+
+  //     const res = await fetch(`${API_URL}/api/appointments`,{
+  //     // const res = await fetch("https://nila-backend-yzem.onrender.com/api/appointments",{
+  //    // const res = await fetch("http://localhost:5000/api/appointments", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify(newAppointment)
+  //     });
+
+  //     if (!res.ok) throw new Error('Failed to create appointment');
+      
+  //     const data = await res.json();
+
+  //     // ✅ SUCCESS ALERT HERE
+  //       alert("Appointment created successfully!");
+        
+  //       const mapped = {
+  //     id: data.id,
+  //     patientName: data.patient_name || '',
+  //     patientId: data.patient_id || '',
+  //     phone:data.phone || '',
+  //     therapistName: data.therapist_name || '',
+  //     date: data.appointment_date
+  //       ? new Date(data.appointment_date).toLocaleDateString('en-IN')
+  //       : '',
+  //     time: data.appointment_time
+  //       ? data.appointment_time.slice(0, 5)
+  //       : '',
+  //     duration: data.duration || 0,
+  //     status: data.status || 'scheduled',
+  //     type: data.type || 'therapy',
+  //     notes: data.notes || ''
+  //   };
+
+  //     // update appointment list
+  //   setAppointments((prev: any) => [...prev, data]);
     
 
-    // admin log
-    const logMessage = `Appointment created for ${formData.patientName} at ${new Date().toLocaleString()}`;
-    setLogs((prev: string[]) => [...prev, logMessage]);
+  //   // admin log
+  //   const logMessage = `Appointment created for ${formData.patientName} at ${new Date().toLocaleString()}`;
+  //   setLogs((prev: string[]) => [...prev, logMessage]);
       
-      // Reset form
-      setFormData({
-        patientName: '',
-        patientId: '',
-        phone: '',
-        therapistName: '',
-        date: '',
-        time: '',
-        duration: 60,
-        status: 'scheduled',
-        type: 'consultation',
-        notes: ''
-      });
-    } catch (err) {
-      console.error("Error creating appointment:", err);
-      alert("Failed to create appointment. Please try again.");
-    }
-  }
+  //     // Reset form
+  //     setFormData({
+  //       patientName: '',
+  //       patientId: '',
+  //       phone: '',
+  //       therapistName: '',
+  //       date: '',
+  //       time: '',
+  //       duration: 60,
+  //       status: 'scheduled',
+  //       type: 'consultation',
+  //       notes: ''
+  //     });
+  //   } catch (err) {
+  //     console.error("Error creating appointment:", err);
+  //     alert("Failed to create appointment. Please try again.");
+  //   }
+  // }
+
+
+
 
   const statusColors = {
     scheduled: 'bg-blue-100 text-blue-800',
@@ -392,8 +437,8 @@ const handleExport = () => {
                 value={formData.patientName}
                 onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
               />
-              </div>
-  <div>
+            </div>
+            <div>
                <label className="block text-sm font-medium mb-1">
                   Patient ID
                  </label>
@@ -404,37 +449,37 @@ const handleExport = () => {
                 value={formData.patientId}
                 onChange={(e) => setFormData({ ...formData, patientId: e.target.value })}
               />
-              </div>
+            </div>
+            <div>
                 <label className="block text-sm font-medium mb-1">
                   Phone
                  </label>
               <input
-             type="text"
-             placeholder="Phone Number"
-              className="w-full border p-2 rounded"
-               value={formData.phone}
-               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-
-              <div>
-          <label className="block text-sm font-medium mb-1">
-            Therapist
-          </label>
-              <select
+                type="text"
+                placeholder="Phone Number"
+                className="w-full border p-2 rounded"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Therapist
+              </label>
+            <select
               className="w-full border p-2 rounded"
               value={formData.therapistName}
               onChange={(e) =>
               setFormData({ ...formData, therapistName: e.target.value })
-  }
->
-  <option value="">Select Therapist</option>
-  {therapists.map((name, index) => (
-    <option key={index} value={name}>
-      {name}
-    </option>
-  ))}
-</select>
-    </div>
+               }  >
+            <option value="">Select Therapist</option>
+            { therapists.map((name, index) => (
+              <option key={index} value={name}>
+              {name}
+            </option>
+               ))}
+            </select>
+            </div>
 <div className="mb-3">
                   <label className="block text-sm font-medium mb-1">
     Appointment Date
@@ -645,8 +690,9 @@ const handleExport = () => {
                             <User className="h-5 w-5 text-blue-600" />
                           </div>
                           <div className="ml-3">
-                            <div className="font-medium text-gray-900">{apt.patientName || 'N/A'}</div>
-                            <div className="text-xs text-gray-500">ID: {apt.patientId || 'N/A'}</div>
+                             <div className="font-medium text-gray-900">{apt.patientName || 'N/A'}</div>
+                             <div className="text-xs text-gray-500">ID: {apt.patientId || 'N/A'}</div>
+                             <div className="text-xs text-gray-500">Phone: 📞 {apt.phone || 'N/A'}</div>
                           </div>
                         </div>
                       </td>
@@ -660,7 +706,9 @@ const handleExport = () => {
                       </td>
                       <td className="py-4 px-4">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">{apt.date || 'N/A'}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                              {apt.date ? apt.date.split("T")[0] : 'N/A'}
+                            </div>
                           <div className="flex items-center text-xs text-gray-500 mt-1">
                             <Clock className="h-3 w-3 mr-1" />
                             {apt.time || 'N/A'}
