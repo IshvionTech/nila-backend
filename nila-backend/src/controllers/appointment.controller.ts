@@ -78,21 +78,22 @@ export const createAppointment = async (req: Request, res: Response) => {
 
 export const sendOtp = async (req: Request, res: Response) => {
   try {
-    const { email, phone } = req.body;
+    const { email } = req.body;
 
-    if (!email && !phone) {
-      return res.status(400).json({ message: "Email or phone required" });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
     }
 
     // ✅ GENERATE OTP (HERE)
     const otp = Math.floor(100000 + Math.random() * 900000);
-    const key = email || phone;
+
     // ✅ STORE OTP (HERE)
-    otpStore[key] = {
+    otpStore[email] = {
       otp,
       expires: Date.now() + 5 * 60 * 1000 // 5 mins
     };
 
+  console.log("Generated OTP:", otp);
     // ✅ EMAIL TRANSPORT
     const transporter = nodemailer.createTransport({
      // host: "smtp.gmail.com",
@@ -114,6 +115,7 @@ export const sendOtp = async (req: Request, res: Response) => {
     });
 
  //console.log("Email sent:", info.response); // 👈 IMPORTANT
+    console.log("✅ OTP sent to email:", email);
 
     res.json({ message: "OTP sent to email successfully" });
 

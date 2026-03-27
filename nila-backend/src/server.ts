@@ -21,7 +21,7 @@ const corsOptions = {
      "https://nila-backend.vercel.app",
      
     "https://nila-frontend-ui-admin-5b8cwjsnd-sivasakthidharans-projects.vercel.app",
-    "https://nila-frontend-d26cl1png-sivasakthidharans-projects.vercel.app",
+    "https://nila-frontend-2ovve5mfi-sivasakthidharans-projects.vercel.app",
   /vercel\.app$/ ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -38,7 +38,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/payment", paymentRoutes);
-app.use("/api", otpRoutes);
 
 // Add this test route
 app.get("/test", (req, res) => {
