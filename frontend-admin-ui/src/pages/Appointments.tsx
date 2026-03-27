@@ -175,14 +175,14 @@ if(!/^\d{10}$/.test(formData.phone))  {
   try {
         console.log("Sending OTP...");
     // ✅ STEP 1: SEND OTP
-    const res = await fetch(`${API_URL}/api/send-otp`, {
+    const res = await fetch(`${API_URL}/api/appointments/send-otp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({  email: formData.email,
-         phone: formData.phone 
-        })
+      body: JSON.stringify({  email: formData.email    
+
+         })
     });
 
      console.log("Response status:", res.status);
@@ -208,7 +208,7 @@ const [otp, setOtp] = useState("");
 const handleVerifyOtp = async () => {
   try {
     // ✅ STEP 2: VERIFY OTP
-    const res = await fetch(`${API_URL}/api/verify-otp`, {
+    const res = await fetch(`${API_URL}/api/appointments/verify-otp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
