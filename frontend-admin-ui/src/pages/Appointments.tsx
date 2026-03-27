@@ -180,7 +180,9 @@ if(!/^\d{10}$/.test(formData.phone))  {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({  email: formData.email })
+      body: JSON.stringify({  email: formData.email,
+         phone: formData.phone 
+        })
     });
 
      console.log("Response status:", res.status);
