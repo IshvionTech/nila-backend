@@ -21,7 +21,7 @@ const corsOptions = {
      "https://nila-backend.vercel.app",
      
     "https://nila-frontend-ui-admin-5b8cwjsnd-sivasakthidharans-projects.vercel.app",
-    "https://nila-nila-frontend-diapr6avl-sivasakthidharans-projects.vercel.app",
+    "https://nila-frontend-d26cl1png-sivasakthidharans-projects.vercel.app",
   /vercel\.app$/ ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
