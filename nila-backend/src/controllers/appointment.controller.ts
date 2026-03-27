@@ -96,31 +96,34 @@ export const sendOtp = async (req: Request, res: Response) => {
   console.log("Generated OTP:", otp);
     // ✅ EMAIL TRANSPORT
     const transporter = nodemailer.createTransport({
-     // host: "smtp.gmail.com",
-      //port: 587,
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS   // app password
       }
     });
 
+ // ✅ ADD HERE
+    await transporter.verify();
+    console.log("✅ SMTP connected");
 
     // ✅ SEND EMAIL
-      await transporter.sendMail({
+     const info = await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP is: ${otp}`
     });
 
- //console.log("Email sent:", info.response); // 👈 IMPORTANT
+    console.log("Email sent:", info.response); // 👈 IMPORTANT
     console.log("✅ OTP sent to email:", email);
 
     res.json({ message: "OTP sent to email successfully" });
 
   } catch (err) {
-    console.error(err);
+    console.error("❌ SEND OTP ERROR:", err);
     res.status(500).json({ message: "Failed to send OTP" });
   }
 };

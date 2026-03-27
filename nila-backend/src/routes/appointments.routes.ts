@@ -3,7 +3,6 @@ import { getAppointments } from "../controllers/appointment.controller";
 import  pool  from "../db";
 import { sendOtp, verifyOtp } from "../controllers/appointment.controller";
 
-
 const router = express.Router();
 
 // GET all
@@ -15,9 +14,7 @@ router.get("/", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch appointments" });
   }
-
 });
-
 
 // CREATE appointment
 router.post("/", async (req, res) => {
@@ -58,10 +55,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
-
 // router.get("/", getAppointments);
 
 export default router;
