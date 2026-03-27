@@ -11,6 +11,7 @@ interface Appointment {
   patientName: string;
   patientId: string;
   phone: string;  
+  email: string;
   therapistName: string;
   date: string;
   time: string;
@@ -35,6 +36,7 @@ export default function Appointments() {
     patientName: '',
     patientId: '',
     phone: '',
+    email: '',
     therapistName: '',
     date: '',
     time: '',
@@ -59,6 +61,7 @@ const fetchAppointments = async () => {
           patientName: apt.patient_name || '',
           patientId: apt.patient_id || '',
           phone: apt.phone || '',
+          email:apt.email || '',
           therapistName: apt.therapist_name || '',
           date: apt.appointment_date || '',
 
@@ -177,7 +180,7 @@ if(!/^\d{10}$/.test(formData.phone))  {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({  phone: formData.phone })
+      body: JSON.stringify({  email: formData.email })
     });
 
      console.log("Response status:", res.status);
@@ -209,7 +212,7 @@ const handleVerifyOtp = async () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        phone: formData.phone,
+        email: formData.email,
         otp: otp
       })
     });
@@ -235,6 +238,7 @@ const createAppointment = async () => {
     patient_name: formData.patientName,
     patient_id: formData.patientId,
     phone: formData.phone,
+    email:formData.email,
     therapist_name: formData.therapistName,
     appointment_date: formData.date,
     appointment_time: formData.time,
@@ -564,6 +568,18 @@ const handleExport = () => {
               />
             </div>
             <div>
+                <label className="block text-sm font-medium mb-1">
+                  Email
+                 </label>
+                <input
+                  type="email"
+                   placeholder="Email"
+                  className="w-full border p-2 rounded"
+                   value={formData.email}
+                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </div>
+            <div>
               <label className="block text-sm font-medium mb-1">
                 Therapist
               </label>
@@ -581,10 +597,10 @@ const handleExport = () => {
                ))}
             </select>
             </div>
-<div className="mb-3">
+            <div className="mb-3">
                   <label className="block text-sm font-medium mb-1">
-    Appointment Date
-  </label>
+                    Appointment Date
+                  </label>
               <input
                 type="date"
                 className="w-full border p-2 rounded"
@@ -794,6 +810,7 @@ const handleExport = () => {
                              <div className="font-medium text-gray-900">{apt.patientName || 'N/A'}</div>
                              <div className="text-xs text-gray-500">ID: {apt.patientId || 'N/A'}</div>
                              <div className="text-xs text-gray-500">Phone: 📞 {apt.phone || 'N/A'}</div>
+                             <div className="text-xs text-gray-500">Email: {apt.email || 'N/A'}</div>
                           </div>
                         </div>
                       </td>
