@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import pool from "../db";
 import otpStore from "../utils/otpStore";
+import axios from "axios";
+import nodemailer from "nodemailer";
 
 export const getAppointments = async (req: Request, res: Response) => {
   try {
@@ -76,26 +78,44 @@ export const createAppointment = async (req: Request, res: Response) => {
 
 export const sendOtp = async (req: Request, res: Response) => {
   try {
-    const { phone } = req.body;
+    const { email } = req.body;
 
-    if (!phone) {
-      return res.status(400).json({ message: "Phone is required" });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
     }
 
     // ✅ GENERATE OTP (HERE)
     const otp = Math.floor(100000 + Math.random() * 900000);
 
     // ✅ STORE OTP (HERE)
-    otpStore[phone] = {
+    otpStore[email] = {
       otp,
       expires: Date.now() + 5 * 60 * 1000 // 5 mins
     };
 
-    console.log("OTP for", phone, "is", otp); // For testing
+    // ✅ EMAIL TRANSPORT
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS   // app password
+      }
+    });
 
-    // TODO: Send SMS here (Twilio / Fast2SMS)
 
-    res.json({ message: "OTP sent successfully" });
+    // ✅ SEND EMAIL
+     const info = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP is: ${otp}`
+    });
+
+ console.log("Email sent:", info.response); // 👈 IMPORTANT
+
+    res.json({ message: "OTP sent to email successfully" });
 
   } catch (err) {
     console.error(err);
@@ -105,9 +125,9 @@ export const sendOtp = async (req: Request, res: Response) => {
 
 export const verifyOtp = async (req: Request, res: Response) => {
   try {
-    const { phone, otp } = req.body;
+    const { email, otp } = req.body;
 
-    const record = otpStore[phone];
+    const record = otpStore[email];
 
     if (!record) {
       return res.status(400).json({ message: "OTP not found" });
@@ -125,7 +145,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
     }
 
     // ✅ SUCCESS
-    delete otpStore[phone];
+    delete otpStore[email];
 
     res.json({ message: "OTP verified successfully" });
 

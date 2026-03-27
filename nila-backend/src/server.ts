@@ -15,14 +15,13 @@ dotenv.config();
 
 const app = express();
 
-
 const corsOptions = {
   origin:[
     "https://nila-backend-878azibi7-sivasakthidharans-projects.vercel.app",
      "https://nila-backend.vercel.app",
      
     "https://nila-frontend-ui-admin-5b8cwjsnd-sivasakthidharans-projects.vercel.app",
-    "https://nila-nila-nila-rg9ao68fn-sivasakthidharans-projects.vercel.app",
+    "https://nila-nila-frontend-diapr6avl-sivasakthidharans-projects.vercel.app",
   /vercel\.app$/ ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -31,9 +30,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));   // fix preflight request
-
-
-
 
 //app.use(cors());
 
@@ -127,15 +123,6 @@ ALTER COLUMN rating TYPE NUMERIC(2,1);
       );
     `);
 
-    // await pool.query(`
-    //   CREATE TABLE IF NOT EXISTS payments (
-    //     id SERIAL PRIMARY KEY,
-    //     user_id INT REFERENCES users(id),
-    //     amount NUMERIC(10,2),
-    //     payment_date DATE
-    //   );
-    // `);
-
 
     await pool.query(`
 CREATE TABLE IF NOT EXISTS upcoming_appointments (
@@ -174,8 +161,8 @@ CREATE TABLE IF NOT EXISTS expert_availability (
 `);  
 
 await pool.query(`
-ALTER TABLE clinic_appointments
-ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+ALTER TABLE clinic_appointments ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+ALTER TABLE clinic_appointments ADD COLUMN IF NOT EXISTS email VARCHAR(150);
 `);  
 
   await pool.query(`
