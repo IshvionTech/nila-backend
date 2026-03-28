@@ -3,9 +3,13 @@ import pool from "../db";
 import otpStore from "../utils/otpStore";
 import axios from "axios";
 import nodemailer from "nodemailer";
+import {Resend } from "resend";
+
+
 
 export const getAppointments = async (req: Request, res: Response) => {
   try {
+    
     const result = await pool.query(
       `SELECT 
         id,
@@ -76,6 +80,8 @@ export const createAppointment = async (req: Request, res: Response) => {
   }
 };
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export const sendOtp = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -95,37 +101,62 @@ export const sendOtp = async (req: Request, res: Response) => {
 
   console.log("Generated OTP:", otp);
     // ✅ EMAIL TRANSPORT
-    const transporter = nodemailer.createTransport({
-      //host: "smtp.gmail.com",
-      //port: 587,
-     // secure: false,
-     service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS   // app password
-      }
-    });
+    // const transporter = nodemailer.createTransport({
+    //   host: "smtp.gmail.com",
+    //   port: 465,
+    //  secure: true,
+    //  family:4,
+    // // service: "gmail",
+    //   auth: {
+    //     user: process.env.EMAIL_USER,
+    //     pass: process.env.EMAIL_PASS   // app password
+    //   },
+    //    connectionTimeout: 10000, // 10 seconds
+    //   greetingTimeout: 10000,
+    //   socketTimeout: 10000,
+    //   // tls: {
+    //   //   rejectUnauthorized: false // Sometimes needed for self-signed certs
+    //   // }
+    // });
 
- // ✅ ADD HERE
-    await transporter.verify();
-    console.log("✅ SMTP connected");
+ //  ADD HERE
+   // await transporter.verify();
+    //console.log("✅ SMTP connected");
 
-    // ✅ SEND EMAIL
-     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    //  SEND EMAIL
+    // const info = await transporter.sendMail({
+    //  from: process.env.EMAIL_USER,
+    await resend.emails.send({
+    from: "onboarding@resend.dev",
       to: email,
       subject: "Your OTP Code",
-      text: `Your OTP is: ${otp}`
+      text: `Your OTP is: ${otp}`,
+       html: `<h3>Your OTP Code</h3><p><strong>${otp}</strong></p><p>This code expires in 5 minutes.</p>`
     });
 
-    console.log("Email sent:", info.response); // 👈 IMPORTANT
+   // console.log("Email sent:", info.response); // 👈 IMPORTANT
     console.log("✅ OTP sent to email:", email);
 
     res.json({ message: "OTP sent to email successfully" });
 
-  } catch (err) {
-    console.error("❌ SEND OTP ERROR:", err);
-    res.status(500).json({ message: "Failed to send OTP" });
+  } catch (error) {
+    console.error("❌ SEND OTP ERROR:", error);
+    //res.status(500).json({ message: "Failed to send OTP" });
+
+      const err = error as any; 
+
+    // Better error response
+    if (err.code === 'ETIMEDOUT') {
+      res.status(500).json({ 
+        message: "Email service timeout. Please check network connectivity.",
+        details: err.message 
+      });
+    } else {
+      res.status(500).json({ 
+        message: "Failed to send OTP", 
+        details: err.message 
+      });
+    }
   }
 };
 
@@ -143,6 +174,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
     // ✅ VALIDATION (HERE)
     if (Date.now() > expires) {
+            delete otpStore[email];
       return res.status(400).json({ message: "OTP expired" });
     }
 
@@ -155,8 +187,10 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
     res.json({ message: "OTP verified successfully" });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "OTP verification failed" });
+
+  } catch (error) {
+    console.error("❌ VERIFY OTP ERROR:", error);
+         const err = error as any;
+    res.status(500).json({ message: "OTP verification failed",  details: err.message  });
   }
 };
