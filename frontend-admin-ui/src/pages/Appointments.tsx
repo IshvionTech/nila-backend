@@ -167,6 +167,9 @@ const [showOtpModal, setShowOtpModal] = useState(false);
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
+  console.log("API URL:", API_URL);  
+  console.log("Email:", formData.email); 
+
 if(!/^\d{10}$/.test(formData.phone))  {
   alert("Enter valid phone number");
   return;
@@ -174,6 +177,7 @@ if(!/^\d{10}$/.test(formData.phone))  {
 
   try {
         console.log("Sending OTP...");
+        console.time("OTP API"); 
     // ✅ STEP 1: SEND OTP
     const res = await fetch(`${API_URL}/api/appointments/send-otp`, {
       method: "POST",
@@ -184,6 +188,7 @@ if(!/^\d{10}$/.test(formData.phone))  {
          })
     });
 
+     console.timeEnd("OTP API");  
      console.log("Response status:", res.status);
 
        const data = await res.json();
@@ -206,6 +211,11 @@ const [otp, setOtp] = useState("");
 
 const handleVerifyOtp = async () => {
   try {
+
+        console.log("Verifying OTP:", otp);  
+    console.log("Email used:", formData.email);
+
+
     // ✅ STEP 2: VERIFY OTP
     const res = await fetch(`${API_URL}/api/appointments/verify-otp`, {
       method: "POST",
@@ -217,6 +227,10 @@ const handleVerifyOtp = async () => {
         otp: otp
       })
     });
+
+
+        const data = await res.json();   // ✅ AFTER FETCH
+    console.log("Verify OTP Response:", data);
 
     if (!res.ok) throw new Error("Invalid OTP");
 
@@ -574,10 +588,10 @@ const handleExport = () => {
                  </label>
                 <input
                   type="email"
-                   placeholder="Email"
+                  placeholder="Email"
                   className="w-full border p-2 rounded"
-                   value={formData.email}
-                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
               </div>
             <div>
